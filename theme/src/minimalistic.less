@@ -1,0 +1,57 @@
+/*!
+ * Stylesheet using minimalistic colors.
+ *
+ * This stylesheet is for the design course where we use grids.
+ * Both horizontal and vertical grids.
+ */
+
+ /**
+ * Normalize and reset the style.
+ */
+@import "normalize.css/normalize.less";
+
+/**
+ * A responsive menu.
+ */
+@import "@desinax/responsive-menu/less/responsive-menu.less";
+
+/**
+ * Font Awesome.
+ */
+@import "@fortawesome/fontawesome-free/less/fontawesome.less";
+@import "@fortawesome/fontawesome-free/less/solid.less";
+@import "@fortawesome/fontawesome-free/less/brands.less";
+
+/**
+ * Internal self contained modules, save in directory module/.
+ */
+@import "modules/stylechooser.less";  // Just an example module
+
+/**
+ * Base style to affect HTML elements on a general scale.
+ */
+@import "base/myBase.less";
+
+/**
+ * Import the vertical grid.
+ */
+@import "@desinax/vertical-grid/less/grid.less";
+
+/**
+ * Import the typographic grid.
+ */
+@import "@desinax/typographic-grid/less/typography-font-families.less";
+@import "@desinax/typographic-grid/less/typography-defaults.less";
+
+/**
+ * Layout style for general structure of header, navbar, main, footer
+ * and other regions of the page including route specific styles.
+ */
+@import "layout/responsive.less";
+@import "layout/regions.less";     // To add style for ?regions
+@import "layout/vgrid.less";
+
+ /**
+ * Import the minimalistic thene
+ */
+ @import "modules/minimalistic.less";

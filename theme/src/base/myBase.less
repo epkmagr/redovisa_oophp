@@ -1,0 +1,102 @@
+/**
+ * Base style for kmom03 to affect HTML elements on a general scale.
+ */
+@bgColorHtml: #424242;
+@bgColorBody: #fff;
+@colorBody: #333;
+@colorBoxShadow: @bgColorFooter;
+
+@infoColor: #205791;
+@infoBackgroundColor: #d5edf8;
+@infoBorderColor: #92cae4;
+@warningColor: #3f3f0e;
+@warningBackgroundColor: #ededab;
+@warningBorderColor: #d1d12e;
+
+// Activate the grid base font
+body {
+    #desinax-hgrid.font(@fontSizeBody);
+}
+
+// Activate grid and affect all typographic elements
+#desinax-hgrid.activateDefaultTypography();
+
+.box-shadow(@x: 0, @y: 0, @blur: 0, @color: @colorBoxShadow) {
+    -webkit-box-shadow: @arguments;
+    -mox-box-shadow: @arguments;
+    box-shadow: @arguments;
+}
+
+h1 {
+    .box-shadow(2px;5px;10px);
+    padding: 2px 2px 2px 6px;
+}
+
+h2, h3 {
+    .box-shadow(1px;2px;10px);
+    padding: 2px 2px 2px 6px;
+}
+
+h4 {
+    border-bottom: 2px solid @colorBoxShadow;
+}
+
+table tr {
+    border-bottom: 1px solid @colorBoxShadow;
+}
+
+p {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.info, .warning {
+    padding: .5em;
+    margin-bottom: 20px;
+}
+
+.info {
+    border: 2px solid @infoBorderColor;
+    color: @infoColor;
+    background: @infoBackgroundColor;
+}
+
+.warning {
+    border: 2px solid @warningBorderColor;
+    color: @warningColor;
+    background: @warningBackgroundColor;
+}
+
+.region-footer {
+    font-size: 0.9em;
+}
+
+.region-footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.region-footer a:hover, .region-footer a:active {
+    text-decoration: underline;
+}
+
+/* Color Theme Swatches in Hex for the website evaluation report */
+@friidrottSe-1-hex: #1b8ef2;
+@friidrottSe-2-hex: #0477bf;
+@friidrottSe-3-hex: #f2b705;
+@friidrottSe-4-hex: #d93f07;
+@friidrottSe-5-hex: #f2f2f2;
+
+/* Color Theme Swatches in Hex for the website evaluation report  */
+@veteranStatistik-1-hex: #d9073f;
+@veteranStatistik-2-hex: #048abf;
+@veteranStatistik-3-hex: #03a64a;
+@veteranStatistik-4-hex: #f0f2ac;
+@veteranStatistik-5-hex: #f28e13;
+
+/* Color Theme Swatches in Hex for the website evaluation report  */
+@ivemBraga-1-hex: #a61473;
+@ivemBraga-2-hex: #184d59;
+@ivemBraga-3-hex: #f2b705;
+@ivemBraga-4-hex: #f27405;
+@ivemBraga-5-hex: #f24607;

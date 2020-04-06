@@ -20,8 +20,8 @@ return [
             "lang" => "sv",
             "stylesheets" => [
                 // Change here to set another default stylesheet
-                "css/dbwebb-se.min.css",
-                //"css/another.min.css",
+                // "css/dbwebb-se.min.css",
+                "css/darkAndBlueWithDesignelement.min.css",
             ],
             "javascripts" => [
                 "js/responsive-menu.js",

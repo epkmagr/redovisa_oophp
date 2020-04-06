@@ -19,7 +19,7 @@ views:
 Om
 =========================
 
-[FIGURE src=image/blommor.jpg?w=500&sharpen class="left" caption="Bild på blommor i en kruka."]
+[FIGURE src=image/blommor.jpg?width=350&sharpen class="left" caption="Bild på blommor i en kruka."]
 
 Objektorientering handlar om samla ihop och gruppera varibler och funktioner på olika sätt. En växt kan vara en klass med egenskaper som flerårig och höjd. En blomma kan vara en egen klass som ärver alla egenskaperna och funktionerna ifrån klassen växt. I klassen blomma kan du specificera färg. Klassen pense kan ärva klassen blomma och har egna egenskaper som namn och odlare. Klassen primula kan också ärva blomma och har specifika egenskaper.
 

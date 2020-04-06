@@ -1,3 +1,6 @@
-#### Footer col 2
+#### Markdown
 
-Med brödtext i ett stycke som säger något trevligt om just detta block, eller kanske en lista av länkar.
+<i class="fas fa-shoe-prints fa-sm">
+Tips och hjälp med Markdown kan du få här:  </i>  
+[guide Markdown](https://www.markdownguide.org/)  
+[Markdown cheat sheet](https://www.markdownguide.org/cheat-sheet/)

@@ -1,0 +1,484 @@
+/**
+ * Layout style using vgrid.
+ */
+
+/**
+ * Variables
+ */
+
+ // Default grid, change to fit your requirements.
+ // @columnWidth:   30;
+ // @gutterWidth:   10;
+ // @columns:       24; // "the magical number"
+ // @gridType:      "float"; // "flex"
+
+/**
+ * General layout
+*/
+.row {
+    #desinax-vgrid.row();
+}
+
+.inner-wrap {
+    #desinax-vgrid.grid(1100px);
+}
+
+// Show the vertical grid
+.vgrid .inner-wrap {
+    @gridImage: "../img/grid_24x30x10-nomargin.png";
+    #desinax-vgrid.showGrid(@gridImage, 1100px);
+
+    &.inner-wrap-header,
+    &.inner-wrap-footer {
+        #desinax-vgrid.showGrid(@gridImage);
+    }
+}
+
+// Show the horizontal grid
+.hgrid .inner-wrap {
+    @gridImage: "../img/theme/magic-number-24.png";
+    #desinax-hgrid.showGrid(@gridImage);
+}
+
+
+/* Main */
+.region-header,
+.region-flash,
+.inner-wrap-header .row,
+.inner-wrap-flash .row {
+    margin: 0;
+    width: 100%;
+}
+
+.wrap-all {
+    background-color: @bgColorBody;
+}
+
+.outer-wrap.outer-wrap-main,
+.outer-wrap.outer-wrap-footer {
+    padding: 0 6px;
+    margin-top: 24px;
+}
+
+.region-main {
+    #desinax-vgrid.column(@columns - 4);
+    #desinax-vgrid.push(2);
+
+    &.has-sidebar {
+        #desinax-vgrid.column(@columns * 3/4);
+        #desinax-vgrid.push(0);
+
+    }
+
+    &.has-sidebar-right {
+        #desinax-vgrid.column(@columns * 3/4 - 1);
+
+    }
+
+    &.has-sidebar-left {
+        #desinax-vgrid.column(@columns * 3/4 - 1);
+        #desinax-vgrid.push(1);
+
+    }
+
+    &.has-sidebar-left.has-sidebar-right {
+        #desinax-vgrid.column(@columns - 2 * (@columns * 1/4 - 1) - 2);
+        #desinax-vgrid.push(1);
+
+    }
+}
+
+.region-sidebar-left, .region-sidebar-right {
+    #desinax-vgrid.column(@columns * 1/4);
+}
+
+.region-sidebar-right {
+    #desinax-vgrid.push(1);
+}
+
+.wrap-sidebar.region-sidebar-right.has-sidebar-left,
+.wrap-sidebar.region-sidebar-left.has-sidebar-right {
+    #desinax-vgrid.column(@columns * 1/4 - 1);
+
+}
+
+.wrap-sidebar.region-sidebar-right.has-sidebar-left {
+    #desinax-vgrid.push(1);
+
+}
+
+.region-main .block {
+    display: flex;
+}
+
+.toc {
+    list-style: none;
+    padding: 0;
+}
+
+.toc a {
+    text-decoration: none;
+}
+
+.toc li {
+    padding-left: 24px;
+}
+
+.toc li:hover {
+    text-decoration: underline;
+}
+
+.toc .section-header {
+    font-weight: 700;
+    padding-left: 0;
+    text-decoration: underline;
+}
+
+.toc .selected {
+    background-color: #7791b9;
+    font-style: italic;
+}
+
+.blog-toc-next-prev-page::after, .next-previous::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.next-previous {
+    overflow: auto;
+    font-size: 120%;
+    background-image: linear-gradient(to right, @bgColorBody, @infoBorderColor);
+    margin-bottom: 12px;
+}
+
+.next-previous .previous {
+    float: left;
+}
+
+.next-previous .next {
+    float: right;
+}
+
+.next-previous .next a {
+    color: white;
+}
+
+.wrap-sidebar .block h4 {
+    border-bottom: 2px solid @bgColorFooter;
+    background-image: linear-gradient(to right, @bgColorBody, @bgColorFooter);
+}
+
+/* Header */
+.inner-wrap-header {
+    #desinax-vgrid.grid(100%);
+}
+
+.site-logo {
+    display: none;
+}
+
+.site-logo-text {
+    font-family: "serif";
+}
+
+.site-logo-text a {
+    text-decoration: none;
+    font-style: italic;
+    font-size: 30px;
+    text-shadow: 2px 2px @bgColorFooter;
+    font-weight: bold;
+}
+
+.site-logo-text-icon img {
+    margin-left: 6px;
+    margin-top: 6px;
+    transform: rotate(-25deg);
+    border-radius: 10px;
+}
+
+.region-header-col-1 {
+    #desinax-vgrid.column(4);
+    margin-top: 6px;
+    margin-bottom: 6px;
+    overflow: hidden;
+}
+
+.region-headercol-2 {
+    #desinax-vgrid.column(16);
+    overflow: hidden;
+}
+
+.region-header-col-3 {
+    #desinax-vgrid.column(4);
+    overflow: hidden;
+}
+
+.my-navbar {
+    list-style-type: none;
+}
+
+.my-navbar li {
+    display: inline-block;
+    padding: 2px 10px;
+}
+
+.my-navbar a {
+    text-decoration: none;
+    padding: 12px 12px 0 12px;;
+    font-size: 24px;}
+
+.my-navbar a:hover {
+    font-weight: bolder;
+}
+
+.rm-desktop ul {
+    background-color:  @bgColorHtml;
+}
+
+#rm-menu {
+    background-color: @bgColorFooter;
+}
+
+#rm-menu.rm-clicked a {
+    font-size: 24px;
+}
+
+/* Breadcrumb */
+.region-breadcrumb {
+    #desinax-vgrid.grid(@columns);
+}
+
+.breadcrumb-list ul {
+    list-style-type: none;
+}
+
+.breadcrumb-list li {
+    display: inline-block;
+}
+
+.breadcrumb-list li a {
+    text-decoration: none;
+    font-size: 120%;
+}
+
+.breadcrumb-list li::after {
+    content: " >> ";
+}
+
+/* Flash */
+.region-flash img {
+    #desinax-vgrid.column(@columns);
+}
+
+/* Byline */
+.region-main .block {
+    background-color: white;
+    border: 2px solid  @aColor;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.region-main .block p {
+    font-style: italic;
+}
+
+/* Footer */
+.outer-wrap-footer {
+    background-color: @bgColorFooter;
+    color: white;
+    clear: both;
+}
+
+.footer-column, .footer-column-x {
+    height: 100%;
+}
+
+.footer-column {
+    #desinax-vgrid.column(@columns / 3);
+}
+
+.site-footer p {
+    #desinax-vgrid.column(@columns);
+
+    font-style: italic;
+    margin-top: 0;
+}
+
+/* Figures */
+figure.figure figcaption {
+    font-style: italic;
+    caption-side: bottom;
+    text-align: center;
+}
+
+figure.figure.right {
+    float: right;
+}
+
+.route- .figure.right img {
+    border-radius: 50%;
+    box-shadow: 5px 10px 18px black;
+}
+
+figure.figure.left img {
+    border-radius: 8px;
+}
+
+
+.route-rapport-fargschema .region-main img {
+    #desinax-vgrid.column(@columns);
+}
+
+/* Responsiveness */
+@media screen and (max-width: 1140px) {
+    .rm-desktop a {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .route-om .region-main img {
+        margin-right: 1em;
+    }
+
+    .route-verktyg-markdown .region-main img,
+    iframe {
+        width: 100%;
+    }
+
+    .region-header-col-1,
+    .region-header-col-3 {
+        #desinax-vgrid.column(@columns / 6);
+        overflow: hidden;
+    }
+
+    .region-header-col-2 {
+        #desinax-vgrid.column(@columns * 5 / 6);
+        overflow: hidden;
+    }
+
+    .region-header-col-1 {
+        float: left;
+    }
+
+    .site-logo-text {
+        margin-right: 22px;
+    }
+
+    .my-navbar a {
+        font-size: 22px;
+    }
+
+    .my-navbar a:hover {
+        font-weight: normal;
+    }
+
+    #rm-menu.rm-clicked a {
+        font-size: 1em;
+    }
+
+}
+
+@media screen and (max-width: 960px) {
+    .rm-small-wrapper {
+        font-size: 200%;
+    }
+
+    .my-navbar a {
+        font-size: 20px;
+    }
+
+    .site-logo-text {
+        margin-right: 20px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .rm-desktop {
+        display: none;
+    }
+
+    .region-header-col-1,
+    .region-header-col-3 {
+        #desinax-vgrid.column(@columns / 2);
+        overflow: hidden;
+    }
+
+    .region-main,
+    .region-main.has-sidebar-left,
+    .region-main.has-sidebar-right,
+    .region-main.has-sidebar-right.has-sidebar-left {
+        #desinax-vgrid.column(@columns);
+    }
+
+    .region-sidebar-right,
+    .region-sidebar-left,
+    .wrap-sidebar.region-sidebar-right.has-sidebar-left,
+    .wrap-sidebar.region-sidebar-left.has-sidebar-right {
+        #desinax-vgrid.push(0);
+        #desinax-vgrid.column(@columns);
+    }
+
+}
+
+    /**
+ * responsive testat mot min Samsung Galaxy S5 mini
+ */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    h1, h2, h3, h4, h5, h6 {
+        font-size: 120%;
+    }
+
+    .next-previous {
+        font-size: 90%;
+        padding-right: 6px;
+        #desinax-vgrid.column(@columns);
+        margin-bottom: 12px;
+        margin-top: 0;
+    }
+
+    .breadcrumb-list li a {
+        margin-bottom: 0;
+    }
+
+    figure.figure.right img,
+    iframe {
+        width: 100%;
+    }
+
+    figure.route-om.figure img {
+        width: 450px;
+    }
+
+    .figure.left {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+    figure.figure figcaption {
+        font-size: 90%;
+        width: 90%;
+    }
+
+    .region-main .block p {
+        font-size: 90%;
+    }
+
+    .footer-column {
+        #desinax-vgrid.column(@columns);
+    }
+
+    .footer-column p {
+        font-size: 120%;
+    }
+
+    .site-footer p {
+        margin-top: 24px;
+        font-size: 120%;
+    }
+
+    .toc .selected {
+        background-color: unset;
+    }
+
+}

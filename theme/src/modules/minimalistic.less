@@ -1,0 +1,44 @@
+// Default font-families. From typography-defaults.less
+@fontFamilyHeadings: "sans-serif";
+@fontFamilyBody:     @fontFamilyVerdana;
+@fontFamilyCode:     "monospace";
+
+/**
+ * My own minimalistic settings.
+ * Colors from https://color.adobe.com/create# with shades of @04_minimalistic-3-hex
+ */
+@bgColorHtml: @04_minimalistic-3-hex;
+@bgColorBody: @04_minimalistic-3-hex;
+@colorBody: @04_minimalistic-2-hex;
+
+@aColor: @04_minimalistic-2-hex;
+@bgColorFooter: @04_minimalistic-5-hex;
+
+@infoBackgroundColor: @bgColorBody;
+@infoBorderColor: @bgColorFooter;
+
+// Magic number and base fontsize. From typography-defaults.less
+@magicNumber:  24px;  // 22px
+@fontSizeBody: 16px;
+
+.next-previous .next a,
+.next-previous .previous a,
+.outer-wrap-footer,
+.region-footer a {
+    color: inherit;
+}
+
+.toc .selected {
+    background-color: @bgColorFooter;
+}
+
+.region-main .block {
+    background-color: @bgColorBody;
+}
+
+/* Color Theme Swatches in Hex from Adobe Color CC */
+@04_minimalistic-1-hex: #93a5ad;
+@04_minimalistic-2-hex: #5d686e;
+@04_minimalistic-3-hex: #cae1ed;
+@04_minimalistic-4-hex: #d4edfa;
+@04_minimalistic-5-hex: #b4c9d4;
