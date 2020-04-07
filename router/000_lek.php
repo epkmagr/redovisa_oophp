@@ -33,7 +33,7 @@ $app->router->get("lek/hello-world-page", function () use ($app) {
     $title = "Hello World as a page";
     $data = [
         "class" => "hello-world",
-        "content" => "Hello World in " . __FILE__,
+        "content" => "<p>Hello World in " . __FILE__,
     ];
 
     $app->page->add("anax/v2/article/default", $data);

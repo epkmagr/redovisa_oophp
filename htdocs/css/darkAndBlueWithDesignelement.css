@@ -5257,6 +5257,9 @@ hr::after {
   padding: 0 0.25em;
   background-color: #fff;
 }
+.wrap-all {
+  min-height: 1200px;
+}
 h1 {
   -webkit-box-shadow: 2px 5px 10px #89bad9;
   -mox-box-shadow: 2px 5px 10px #89bad9;
@@ -5306,9 +5309,6 @@ p {
 .region-footer a:active {
   text-decoration: underline;
 }
-/* Color Theme Swatches in Hex for the website evaluation report */
-/* Color Theme Swatches in Hex for the website evaluation report  */
-/* Color Theme Swatches in Hex for the website evaluation report  */
 /**
  * Import the vertical grid.
  */
@@ -6292,7 +6292,7 @@ tr:hover {
 }
 .route-om .region-main .figure img {
   border: 5px solid white;
-  margin-right: 2em;
+  margin-right: 1em;
 }
 .figure.left.byline {
   margin-right: 0.5em;

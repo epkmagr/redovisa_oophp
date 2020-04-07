@@ -19,9 +19,11 @@ views:
 Om
 =========================
 
-[FIGURE src=image/blommor.jpg?width=350&sharpen class="left" caption="Bild på blommor i en kruka."]
+[FIGURE src=image/blommor.jpg?width=380&sharpen class="left" caption="Bild på blommor i en kruka."]
 
-Objektorientering handlar om samla ihop och gruppera varibler och funktioner på olika sätt. En växt kan vara en klass med egenskaper som flerårig och höjd. En blomma kan vara en egen klass som ärver alla egenskaperna och funktionerna ifrån klassen växt. I klassen blomma kan du specificera färg. Klassen pense kan ärva klassen blomma och har egna egenskaper som namn och odlare. Klassen primula kan också ärva blomma och har specifika egenskaper.
+Objektorientering handlar om samla ihop och gruppera varibler och funktioner på olika sätt. Ett objekt har all sin förmåga samlad i metoder och egenskaper (eller medlemsvariabler) som samlas i en klass. Allt som kan göras med objektet exponeras via metoder. All information som objektet behöver spara finns i dess medlemsvariabler.
+
+En blomma kan vara ett objekt av en klass med egenskaper som flerårig och färg. Denna klass har egenskaper och metoder som ärvs av dess barn, som till exempel kan vara pense och primula. Klassen pense kan ärva klassen blomma och har egna egenskaper som namn och odlare. Klassen primula kan också ärva blomma och har egna specifika egenskaper.
 
 Kursen oophp är en förkortning av Objektorienterade webbteknologier och handlar om Objektorienterade programmeringstekniker i språket PHP. Klassiska objektorienterade konstruktioner hanteras tillsammans med objektorienterad programmering i webbaserat ramverk tillsammans med databaser samt enhetstestning.
 
