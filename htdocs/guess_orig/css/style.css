@@ -1,0 +1,58 @@
+/* General styling */
+html {
+    background-color: white;
+    overflow-y: scroll;
+    min-height: 1000px;
+}
+
+h1 {
+    padding: 0.5em;
+    background-color: lightgreen;
+}
+
+main {
+    min-height: 20em;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+/* Main */
+input[type=text],
+input[type=submit] {
+    width: 10em;
+    height: 3em;
+}
+
+input[type=text] {
+    font-size: 1.2em;
+    text-align: center;
+}
+
+input[type=submit] {
+    background-color: #bdf5bd;
+}
+
+input[name=doGuess] {
+    background-color: #ccccff;
+}
+
+input[name=cheat] {
+    background-color: #ffb3b3;
+}
+
+.playAgain {
+    margin-left: 5em;
+}
+
+/* Footer */
+.site-footer {
+    background-image:  url("../img/numbers.png");
+    background-repeat: no-repeat;
+    min-height: 300px;
+}
+
+.site-footer p {
+    margin-left: 15em;
+}
