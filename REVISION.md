@@ -24,3 +24,9 @@ v1.0.2 (2020-04-07)
 * Moved README.md and REVISION.md to root catalogue.
 * Udated README.md.
 * Played around a little with Test&Lek.
+
+v2.0.0 (2020-04-09)
+------------------------
+
+* First draft of kmom02.
+* Added a basic variant of Guess my number with routes and views.
