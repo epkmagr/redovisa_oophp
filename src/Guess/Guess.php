@@ -83,6 +83,7 @@ class Guess
 
         $this->tries -= 1; // reduce the number of tries
         if ($number < 1 || $number > 100) {
+            //throw new GuessException(" faulty. The number should be between 1 and 100, 1 and 100 included.");
             throw new GuessException(" faulty. The number should be between 1 and 100, 1 and 100 included.");
         }
         if ($number > $this->number) { // the guessed number is too high

@@ -5260,6 +5260,9 @@ hr::after {
 .wrap-all {
   min-height: 1200px;
 }
+.region-main {
+  min-height: 400px;
+}
 h1 {
   -webkit-box-shadow: 2px 5px 10px #89bad9;
   -mox-box-shadow: 2px 5px 10px #89bad9;
@@ -5308,6 +5311,23 @@ p {
 .region-footer a:hover,
 .region-footer a:active {
   text-decoration: underline;
+}
+.playAgain {
+  margin-left: 4em;
+}
+input[type=text] {
+  border-radius: 12px;
+}
+input[type=text],
+input[type=submit] {
+  width: 10em;
+  height: 3em;
+  background-color: #d5edf8;
+  border: 2px solid #92cae4;
+}
+input[type=text] {
+  font-size: 1.2em;
+  text-align: center;
 }
 /**
  * Import the vertical grid.
@@ -6330,6 +6350,7 @@ tr:hover {
 .region-main .block {
   background-image: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/design/me/redovisa/htdocs/img/theme/byline.png);
 }
-.debug-info {
+.debug-info,
+pre {
   background-color: #89bad9;
 }

@@ -31,6 +31,10 @@ body {
     min-height: 1200px;
 }
 
+.region-main {
+    min-height: 400px;
+}
+
 h1 {
     .box-shadow(2px;5px;10px);
     padding: 2px 2px 2px 6px;
@@ -82,4 +86,25 @@ p {
 
 .region-footer a:hover, .region-footer a:active {
     text-decoration: underline;
+}
+
+.playAgain {
+    margin-left: 4em;
+}
+
+input[type=text] {
+    border-radius: 12px;
+}
+
+input[type=text],
+input[type=submit] {
+    width: 10em;
+    height: 3em;
+    background-color: @infoBackgroundColor;
+    border: 2px solid @infoBorderColor;
+}
+
+input[type=text] {
+    font-size: 1.2em;
+    text-align: center;
 }

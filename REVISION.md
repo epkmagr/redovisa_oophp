@@ -30,3 +30,10 @@ v2.0.0 (2020-04-09)
 
 * First draft of kmom02.
 * Added a basic variant of Guess my number with routes and views.
+
+v2.0.1 (2020-04-10)
+------------------------
+
+* Added exception handling.
+* Added new views for correct result with a happy face and a gameover view
+  with a sad face. Only valid button on these views are Play again.

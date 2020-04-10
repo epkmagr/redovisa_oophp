@@ -40,8 +40,14 @@ $app->router->get("game/play", function () use ($app) {
         "cheat" => $cheat ?? null
     ];
 
-    $app->page->add("guess/play", $data);
-    $app->page->add("guess/debug");
+    if ($res == "correct") {
+        $app->page->add("guess/result", $data);
+    } elseif ($game->tries() == 0) {
+        $app->page->add("guess/gameover", $data);
+    } else {
+        $app->page->add("guess/play", $data);
+    }
+    // $app->page->add("guess/debug");
 
     return $app->page->render([
         "title" => $title,
@@ -63,10 +69,16 @@ $app->router->post("game/play", function () use ($app) {
     $game = $_SESSION["game"];
 
     if ($doGuess) {
-        $res = $game->makeGuess($guess);
-        $_SESSION["game"] = $game;
-        $_SESSION["res"] = $res;
-        $_SESSION["guess"] = $guess;
+        try {
+            $res = $game->makeGuess($guess);
+            $_SESSION["game"] = $game;
+            $_SESSION["res"] = $res;
+            $_SESSION["guess"] = $guess;
+        } catch (\Epkmagr\Guess\GuessException $guessExc) {
+            // echo "Got exception: " . get_class($guessExc) . "<hr>";
+            $_SESSION["game"] = $game;
+            $_SESSION["res"] = $guessExc->getMessage();
+        }
     } elseif ($cheat) {
         $_SESSION["cheat"] = $cheat;
     } elseif ($initGame) {
