@@ -1,4 +1,10 @@
 <?php
+/**
+ * Summary for the class for Guess. Guess is used to play the game
+ * "Guess my number". Guess on a number between 1 and 100.
+ *
+ * @author Marie Grahn, mbfs17@student.bth.se
+ */
 namespace Epkmagr\Guess;
 
 /**
@@ -8,7 +14,7 @@ class Guess
 {
     /**
     * @var int $number   The current secret number.
-    * @var int $tries    Number of tries a guess has been made.
+    * @var int $tries    The number of tries a guess has been made.
     */
     private $number;
     private $tries;
@@ -72,6 +78,8 @@ class Guess
     /**
      * Make a guess, decrease remaining guesses and return a string stating
      * if the guess was correct, too low or to high or if no guesses remains.
+     *
+     * @param int $number The current secret number.
      *
      * @throws GuessException when guessed number is out of bounds.
      *

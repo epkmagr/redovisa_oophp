@@ -9,5 +9,8 @@
     </transformer>
     <files>
         <directory>src</directory>
+        <directory>vendor/anax</directory>
+        <ignore>test/*</ignore>
+        <directory>vendor/phpdocumentor</directory>
     </files>
 </phpdoc>

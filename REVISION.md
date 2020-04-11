@@ -37,3 +37,9 @@ v2.0.1 (2020-04-10)
 * Added exception handling.
 * Added new views for correct result with a happy face and a gameover view
   with a sad face. Only valid button on these views are Play again.
+
+v2.0.2 (2020-04-11)
+------------------------
+
+* Updated Guess och GuesException with phpDoc.
+* Udpated my phpDoc configuration and left it out of my Git repo.
