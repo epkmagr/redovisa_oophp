@@ -6354,3 +6354,7 @@ tr:hover {
 pre {
   background-color: #89bad9;
 }
+/* Dice100 */
+.dice100 input[type=submit] {
+  width: 15em;
+}

@@ -43,3 +43,10 @@ v2.0.2 (2020-04-11)
 
 * Updated Guess och GuesException with phpDoc.
 * Udpated my phpDoc configuration and left it out of my Git repo.
+
+v3.0.0 (2020-04-16)
+------------------------
+
+* First draft of kmom03.
+* Dice 100 for two players and 2 dices.
+* Updated kmom03 report with answer on testing questions.
