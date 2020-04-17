@@ -21,11 +21,12 @@ class Player
      * Constructor to initiate the dicehand with a number of dices.
      *
      * @param string $name The name of the player, default = "".
-     */
-    public function __construct(string $name = "")
+     * @param int $noOfDices  The number of players to create, default = 2.
+*/
+    public function __construct(string $name = "", int $noOfDices = 2)
     {
         $this->name = $name;
-        $this->hand = new DiceHand();
+        $this->hand = new DiceHand($noOfDices);
         $this->score = 0;
     }
 
@@ -72,6 +73,16 @@ class Player
     }
 
     /**
+     * Get the number of dices in a hand.
+     *
+     * @return string as the name of the player.
+     */
+    public function getNoOfDices()
+    {
+        return $this->hand->getNoOfDices();
+    }
+
+    /**
      * Do a round and return the sum of points of the round. If the round is
      * unvalid, i.e. containing 1, then the sum is 0.
      *
@@ -99,6 +110,16 @@ class Player
     {
         $this->hand->roll();
 
-        return $values = $this->hand->values();
+        return $this->hand->values();
+    }
+
+    /**
+     * Roll the dices
+     *
+     * @return array with a graphical representation of last roll of the dices.
+     */
+    public function getGraphicValues()
+    {
+        return $this->hand->graphicValues();
     }
 }

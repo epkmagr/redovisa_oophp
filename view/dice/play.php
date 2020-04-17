@@ -28,6 +28,8 @@ namespace Anax\View;
 <div>
     <h4>Aktuell spelare</h4>
 
+    <p>Antalet tärningar per runda: <?= $noOfDices ?>.</p>
+
     <?php if ($startOrder === 0) : ?>
         <p>Spelare 1: <?= $game->getCurrentPlayer(0)->getName() ?></p>
     <?php endif ?>
@@ -47,8 +49,16 @@ namespace Anax\View;
         </form>
     <?php endif ?>
 
-    <?php if ($roll && !in_array(null, $values, true)) : ?>
+    <?php if ($roll && $values != null) : ?>
+        <p class="dice-sprite">
+            <?php foreach ($values as $value) : ?>
+                <i class="dice-sprite dice-<?= $value ?>"></i>
+            <?php endforeach; ?>
+        </p>
+
         <p><?= implode(", ", $values) ?></p>
+
+        <p>Summa tärningar i rundan: <?= $tmpScore?></p>
     <?php endif ?>
 </div>
 

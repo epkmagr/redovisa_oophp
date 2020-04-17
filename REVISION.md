@@ -50,3 +50,11 @@ v3.0.0 (2020-04-16)
 * First draft of kmom03.
 * Dice 100 for two players and 2 dices.
 * Updated kmom03 report with answer on testing questions.
+
+v3.0.1 (2020-04-17)
+------------------------
+
+* Added support for a flexible number of dices per hand.
+* Updated the classes with the latest code.
+* Updated the test classes for full test coverage.
+* Added graphical dice faces.

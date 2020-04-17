@@ -17,19 +17,37 @@ class Dice100Test extends TestCase
     {
         $game = new Dice100();
         $this->assertInstanceOf("\Epkmagr\Dice\Dice100", $game);
+
+        $res = $game->getTheNumberOfPlayers();
+        $exp = 2;
+        $this->assertEquals($exp, $res);
+        $player = $game->getCurrentPlayer(0);
+        $res = $player->getName();
+        $exp = "";
+        $this->assertEquals($exp, $res);
+        $res = $player->getNoOfDices();
+        $exp = 5;
+        $this->assertEquals($exp, $res);
     }
 
     /**
      * Construct object and verify that the object is of expected instance.
-     * Use a valid argument.
+     * Use a valid arguments, 6 players and 5 dices per hand.
      */
-    public function testCreateObjectWithArgument()
+    public function testCreateObjectWithArguments()
     {
-        $game = new Dice100(6);
+        $game = new Dice100(6, 2);
         $this->assertInstanceOf("\Epkmagr\Dice\Dice100", $game);
 
         $res = $game->getTheNumberOfPlayers();
         $exp = 6;
+        $this->assertEquals($exp, $res);
+        $player = $game->getCurrentPlayer(0);
+        $res = $player->getName();
+        $exp = "";
+        $this->assertEquals($exp, $res);
+        $res = $player->getNoOfDices();
+        $exp = 2;
         $this->assertEquals($exp, $res);
     }
 
@@ -62,7 +80,7 @@ class Dice100Test extends TestCase
     {
         $game = new Dice100();
         $res = $game->startOrder();
-        $exp = 0;
+        $exp = 1;
         $this->assertEquals($exp, $res);
     }
 
@@ -75,7 +93,8 @@ class Dice100Test extends TestCase
         $game = new Dice100();
         $player1 = $game->getCurrentPlayer(0);
         $values = $game->doRound($player1);
-        $this->assertGreaterThanOrEqual(5, array_sum($values));
+        $exp = $player1->getNoOfDices();
+        $this->assertGreaterThanOrEqual(2, array_sum($values));
     }
 
     /**
@@ -88,7 +107,7 @@ class Dice100Test extends TestCase
         $game = new Dice100();
         $player1 = $game->getCurrentPlayer(0);
         $expScore = 43;
-        $values = $game->endRound($player1, $expScore);
+        $game->endRound($player1, $expScore);
         $this->assertEquals($expScore, $player1->getScore());
     }
 
@@ -103,7 +122,7 @@ class Dice100Test extends TestCase
         $player1 = $game->getCurrentPlayer(0);
         $player1->setScore(20);
         $roundScore = 43;
-        $values = $game->endRound($player1, $roundScore);
+        $game->endRound($player1, $roundScore);
         $expScore = 63;
         $this->assertEquals($expScore, $player1->getScore());
     }
@@ -119,19 +138,41 @@ class Dice100Test extends TestCase
         $player1 = $game->getCurrentPlayer(0);
         $player1->setScore(20);
         $roundScore = 0;
-        $values = $game->endRound($player1, $roundScore);
+        $game->endRound($player1, $roundScore);
         $expScore = 20;
         $this->assertEquals($expScore, $player1->getScore());
     }
 
-    // /**
-    //  * Test play.
-    //  */
-    // public function testPlay()
-    // {
-    //     $game = new Dice100();
-    //     $res = $game->startOrder();
-    //     $exp = 0;
-    //     $this->assertEquals($exp, $res);
-    // }
+    /**
+     * Test win when score is lower than GOAL.
+     */
+    public function testWinFalse()
+    {
+        $game = new Dice100();
+        $res = $game->win(19);
+        $exp = false;
+        $this->assertEquals($exp, $res);
+    }
+
+    /**
+     * Test win true when score is higher than GOAL.
+     */
+    public function testWinTrue()
+    {
+        $game = new Dice100();
+        $res = $game->win(102);
+        $exp = true;
+        $this->assertEquals($exp, $res);
+    }
+
+    /**
+     * Test win true when score is equal to GOAL.
+     */
+    public function testWinTrue100()
+    {
+        $game = new Dice100();
+        $res = $game->win(100);
+        $exp = true;
+        $this->assertEquals($exp, $res);
+    }
 }

@@ -51,7 +51,7 @@ class DiceHandTest extends TestCase
      * Construct object and roll the DiceHand.
      * Use no arguments.
      */
-    public function testRollAndCheckValue()
+    public function testRollAndCheckValues()
     {
         $diceHand = new DiceHand();
         $diceHand->roll();
@@ -59,6 +59,24 @@ class DiceHandTest extends TestCase
         $exp = 5; // 5 values
         $this->assertEquals($exp, count($res));
         $this->assertGreaterThanOrEqual($exp, $res);
+    }
+
+    /**
+     * Construct object and roll the DiceHand.
+     * Use no arguments.
+     */
+    public function testRollAndCheckGraphicValues()
+    {
+        $diceHand = new DiceHand();
+        $diceHand->roll();
+        $res = $diceHand->graphicValues();
+        $values = $diceHand->values();
+        $exp = 5; // 5 values
+        $this->assertEquals($exp, count($res));
+        $this->assertGreaterThanOrEqual($exp, $res);
+        $this->assertStringContainsString("dice-", $res[0]);
+        $this->assertStringContainsString($values[0], $res[0]);
+        $this->assertStringContainsString($values[1], $res[1]);
     }
 
     /**

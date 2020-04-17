@@ -31,18 +31,19 @@ class Dice100
      * Constructor to initiate the dicehand with a number of dices.
      *
      * @param int $noOfPlayers  The number of players to create, default = 2.
+     * @param int $noOfDices  The number of players to create, default = 5.
      */
-    public function __construct(int $noOfPlayers = 2)
+    public function __construct(int $noOfPlayers = 2, int $noOfDices = 5)
     {
-        if ($noOfPlayers < 1) {
-            throw new DiceException("The number of players must be 1 or more.");
+        if ($noOfPlayers < 2) {
+            throw new DiceException("The number of players must be 2 or more.");
         }
         $this->players  = [];
 
         for ($i = 0; $i < $noOfPlayers; $i++) {
-            $this->players[$i]  = new Player();
+            $this->players[$i]  = new Player("", $noOfDices);
         }
-        $currentPlayer = 0;
+        $this->currentPlayer = 1;
     }
 
     /**
@@ -71,12 +72,12 @@ class Dice100
      * Desides the start order of the players, the one with the highest value
      * starts the game.
      *
-     * @return int as the number of the player to start, default is 0, which
-     * is the first player in the array.
+     * @return int as the number of the player to start, default is 1, which
+     * is the first player in the array after the computer.
      */
     public function startOrder()
     {
-        return 0;
+        return $this->currentPlayer;
     }
 
     /**
@@ -102,48 +103,19 @@ class Dice100
         $currentPlayer->setScore($currentPlayer->getScore() + $newScore);
     }
 
-    // /**
-    //  * Play a round of Dice100
-    //  *
-    //  * @return void.
-    //  */
-    // public function play()
-    // {
-    //     $noOfPlayers = getTheNumberOfPlayers();
-    //     $tmpScore = 0;
-    //     for ($i = 0; $i < $noOfPlayers; $i++) {
-    //         // playOnePlayer($this->players[$i]);
-    //         $scoreBefore = $this->players[$i]->getScore();
-    //         $roundScore = $this->players[$i]->doRound();
-    //         if ($roundScore == 0) {
-    //             // Nothing happens and the turn goes to the next player.
-    //         } else {
-    //             $tmpScore += $roundScore;
-    //             // Does this player want to do another round?
-    //             // Mer logik hos spelaren?
-    //         }
-    //     }
-    // }
-
-    // /**
-    //  * Play a round of Dice100
-    //  *
-    //  * @param Player $player  The actual player to in turn to play a round.
-    //  * @param boolean $continue  True if the player wants to play another round.
-    //  * @return void.
-    //  */
-    // public function playOnePlayer(Player $player, boolean $continue = true)
-    // {
-    //     $scoreBefore = $this->players[$i]->getScore();
-    //     $tmpScore = 0;
-    //     do {
-    //         $roundScore = $this->players[$i]->doRound();
-    //         if ($roundScore != 0) {
-    //             // $continue = false;
-    //             $tmpScore += $roundScore;
-    //         } else {
-    //
-    //         }
-    //     } while ($roundScore > 0 && $continue);
-    // }
+    /**
+     * Desides if the player has enough score to win.
+     *
+     * @var int $tmpScore The temporary score of the player.
+     * @return boolean as true if the temporary score is higher than GOAL,
+     * otherwise it return false.
+     */
+    public function win(int $tmpScore)
+    {
+        if ($tmpScore >= self::GOAL) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

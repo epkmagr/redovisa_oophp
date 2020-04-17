@@ -9,18 +9,21 @@ namespace Epkmagr\Dice;
 class DiceHand
 {
     /**
-     * @var Dice $dices   Array consisting of dices.
+     * @var DiceGraphic $dices   Array consisting of dices.
      * @var int  $values  Array consisting of last roll of the dices.
+     * @var string  $graphicValues  Array consisting of a graphical
+     *              representation of last roll of the dices.
      */
     private $dices;
     private $values;
+    private $graphicValues;
 
     /**
      * Constructor to initiate the dicehand with a number of dices.
      *
      * @param int $dices The number of dices to create, default = 5.
      */
-    public function __construct(int $dices = 2)
+    public function __construct(int $dices = 5)
     {
         if ($dices < 1) {
             throw new DiceException("The number of dices must be 1 or more.");
@@ -28,10 +31,12 @@ class DiceHand
 
         $this->dices  = [];
         $this->values = [];
+        $this->graphicValues = [];
 
         for ($i = 0; $i < $dices; $i++) {
-            $this->dices[$i]  = new Dice();
+            $this->dices[$i]  = new DiceGraphic();
             $this->values[$i] = null;
+            $this->graphicValues = null;
         }
     }
 
@@ -55,6 +60,7 @@ class DiceHand
         $dices = $this->getNoOfDices();
         for ($i = 0; $i < $dices; $i++) {
             $this->dices[$i]->roll();
+            $this->graphicValues[$i] = $this->dices[$i]->graphic();
             $this->values[$i] = $this->dices[$i]->getLastRoll();
         }
     }
@@ -67,6 +73,16 @@ class DiceHand
     public function values()
     {
         return $this->values;
+    }
+
+    /**
+     * Get the graphical representation of dices from last roll.
+     *
+     * @return array with values of the last roll.
+     */
+    public function graphicValues()
+    {
+        return $this->graphicValues;
     }
 
     /**

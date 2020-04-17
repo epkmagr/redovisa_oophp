@@ -5330,6 +5330,42 @@ input[type=text] {
   font-size: 1.2em;
   text-align: center;
 }
+/* Dice100 */
+.dice100 input[type=submit] {
+  width: 15em;
+}
+.dice100 {
+  margin-bottom: 12px;
+}
+/**
+ * CSS sprite for a dice with six faces. -webkit-box;
+ */
+.dice-sprite {
+  display: -webkit-box;
+  padding: 0;
+  margin: 0 4px 0 0;
+  width: 32px;
+  height: 32px;
+  background: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/oophp/me/redovisa/htdocs/img/dice-faces.jpg) no-repeat;
+}
+.dice-sprite.dice-1 {
+  background-position: -160px 0;
+}
+.dice-sprite.dice-2 {
+  background-position: -128px 0;
+}
+.dice-sprite.dice-3 {
+  background-position: -96px 0;
+}
+.dice-sprite.dice-4 {
+  background-position: -64px 0;
+}
+.dice-sprite.dice-5 {
+  background-position: -32px 0;
+}
+.dice-sprite.dice-6 {
+  background-position: 0 0;
+}
 /**
  * Import the vertical grid.
  */

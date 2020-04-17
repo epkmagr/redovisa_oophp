@@ -11,25 +11,37 @@ class PlayerTest extends TestCase
 {
     /**
      * Construct object and verify that the object is of expected instance.
-     * Use no arguments.
+     * Use no arguments. Testing against default values.
      */
     public function testCreateObjectNoArguments()
     {
         $player = new Player();
         $this->assertInstanceOf("\Epkmagr\Dice\Player", $player);
+
+        $res = $player->getName();
+        $exp = "";
+        $this->assertEquals($exp, $res);
+
+        $res = $player->getNoOfDices();
+        $exp = 2;
+        $this->assertEquals($exp, $res);
     }
 
     /**
      * Construct object and verify that the object is of expected instance.
-     * Use a valid argument.
+     * Use a valid arguments.
      */
     public function testCreateObjectWithArgument()
     {
-        $player = new Player("Marie");
+        $player = new Player("Marie", 5);
         $this->assertInstanceOf("\Epkmagr\Dice\Player", $player);
 
         $res = $player->getName();
         $exp = "Marie";
+        $this->assertEquals($exp, $res);
+
+        $res = $player->getNoOfDices();
+        $exp = 5;
         $this->assertEquals($exp, $res);
     }
 
@@ -58,7 +70,7 @@ class PlayerTest extends TestCase
     }
 
     /**
-     * Test get score.
+     * Test to set score.
      */
     public function testSetScore()
     {
@@ -69,6 +81,17 @@ class PlayerTest extends TestCase
         $this->assertEquals($exp, $res);
     }
 
+    /**
+     * Test to set score.
+     */
+    public function testGetGraphicValues()
+    {
+        $player = new Player("Marie");
+        $player->doRound();
+        $res = $player->getGraphicValues();
+        $exp = "dice-";
+        $this->assertStringContainsString($exp, $res[0]);
+    }
 
     /**
      * Construct object and do a round until $sum = 0. Dices with a 1.
@@ -103,7 +126,10 @@ class PlayerTest extends TestCase
     public function testRollAndReturnHand()
     {
         $player = new Player("Marie");
-        $values = $player->rollAndReturnHand();
-        $this->assertGreaterThanOrEqual(5, array_sum($values));
+        $res = $player->rollAndReturnHand();
+        $values = $player->getGraphicValues();
+        $this->assertGreaterThanOrEqual(2, array_sum($res));
+        $this->assertStringContainsString($res[0], $values[0]);
+        $this->assertStringContainsString($res[1], $values[1]);
     }
 }

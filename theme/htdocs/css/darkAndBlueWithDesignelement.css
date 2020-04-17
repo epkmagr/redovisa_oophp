@@ -5329,6 +5329,42 @@ input[type=text] {
   font-size: 1.2em;
   text-align: center;
 }
+/* Dice100 */
+.dice100 input[type=submit] {
+  width: 15em;
+}
+.dice100 {
+  margin-bottom: 12px;
+}
+/**
+ * CSS sprite for a dice with six faces. -webkit-box;
+ */
+.dice-sprite {
+  display: -webkit-box;
+  padding: 0;
+  margin: 0 4px 0 0;
+  width: 32px;
+  height: 32px;
+  background: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/oophp/me/redovisa/htdocs/img/dice-faces.jpg) no-repeat;
+}
+.dice-sprite.dice-1 {
+  background-position: -160px 0;
+}
+.dice-sprite.dice-2 {
+  background-position: -128px 0;
+}
+.dice-sprite.dice-3 {
+  background-position: -96px 0;
+}
+.dice-sprite.dice-4 {
+  background-position: -64px 0;
+}
+.dice-sprite.dice-5 {
+  background-position: -32px 0;
+}
+.dice-sprite.dice-6 {
+  background-position: 0 0;
+}
 /**
  * Import the vertical grid.
  */
@@ -6338,23 +6374,106 @@ tr:hover {
 /**
  * Import dark colors and improved design elements
  */
+/**
+ * My own dark settings.
+ * Colors from https://color.adobe.com/create# see in the bottom of this file
+ */
+.rm-small-wrapper {
+  font-size: 200%;
+}
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+.stylechooser,
+.rm-small-wrapper,
+.region-footer a,
+.breadcrumb-list li::after,
+.next-previous .previous,
+th,
+td,
+li a,
+ol,
+.rm-desktop li a,
+.rm-desktop li a:hover,
+label {
+  color: #89bad9;
+}
+.next-previous .next a {
+  color: #101e26;
+}
+thead {
+  box-shadow: 0 1px 0 #89bad9;
+}
+tr:hover {
+  background-color: #f2f2f2;
+}
+.stylechooser fieldset {
+  border: 2px groove #89bad9;
+}
+.toc li:hover {
+  color: #89bad9;
+}
+.toc .selected {
+  background-color: #89bad9;
+  opacity: 0.5;
+}
+.toc .selected a {
+  color: #101e26;
+}
+.footer-column i {
+  font-size: 120%;
+}
+.site-logo-text a {
+  text-shadow: 2px 2px #f2f2f2;
+}
+.region-main .block {
+  background-color: #89bad9;
+  border: 5px groove #f2f2f2;
+}
+.region-main .block p {
+  color: #101e26;
+}
+.route- .figure.right img {
+  border-radius: 50%;
+  box-shadow: 5px 10px 18px #89bad9;
+}
+.route-om .region-main .figure img {
+  border: 5px solid white;
+}
+.outer-wrap-footer {
+  background-image: linear-gradient(to bottom, #101e26, #325573, #101e26);
+}
+.region-footer h5 {
+  border-bottom: 1px solid #89bad9;
+}
+#rm-menu {
+  background-color: #101e26;
+  border-left: 8px groove #89bad9;
+}
+#rm-menu.rm-clicked a,
+.rm-max .rm-small .rm-button.rm-clicked {
+  color: #89bad9;
+}
+/* Color Theme Swatches in Hex from Adobe Color CC */
 .region-footer h5 {
   border-bottom: 2px dotted #89bad9;
 }
 .toc .selected {
-  background-image: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/design/me/redovisa/htdocs/img/theme/blueHeather256x256.jpg);
+  background-image: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/oophp/me/redovisa/htdocs/img/theme/blueHeather256x256.jpg);
   background-position: right;
   background-size: 20% 100%;
   background-repeat: no-repeat;
 }
 .region-main .block {
-  background-image: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/design/me/redovisa/htdocs/img/theme/byline.png);
+  background-image: url(http://www.student.bth.se/~mbfs17/dbwebb-kurser/oophp/me/redovisa/htdocs/img/theme/byline.png);
 }
 .debug-info,
 pre {
   background-color: #89bad9;
-}
-/* Dice100 */
-.dice100 input[type=submit] {
-  width: 15em;
 }
