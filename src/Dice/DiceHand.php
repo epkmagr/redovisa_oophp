@@ -25,8 +25,8 @@ class DiceHand
      */
     public function __construct(int $dices = 5)
     {
-        if ($dices < 1) {
-            throw new DiceException("The number of dices must be 1 or more.");
+        if ($dices < 1 || $dices > 10) {
+            throw new DiceException("The number of dices must be between 1 and 10.");
         }
 
         $this->dices  = [];
@@ -78,7 +78,7 @@ class DiceHand
     /**
      * Get the graphical representation of dices from last roll.
      *
-     * @return array with values of the last roll.
+     * @return array with string values of the last roll.
      */
     public function graphicValues()
     {

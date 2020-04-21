@@ -1,8 +1,6 @@
 Revision history
 =======================
 
-
-
 v1.0.0 (2020-04-05)
 ------------------------
 
@@ -58,3 +56,18 @@ v3.0.1 (2020-04-17)
 * Updated the classes with the latest code.
 * Updated the test classes for full test coverage.
 * Added graphical dice faces.
+
+v3.0.2 (2020-04-21)
+------------------------
+
+* Added picture of codecoverage in Dice.
+* Added functionality and route for startOrder.
+* Added test cases for 100% test coverage of Dice.
+* Clean the code.
+* Updated the views.
+* Added compare with competitor's score in computerContinue.
+* Added more tests for computerContinue.
+* Finished the report of kmom03.
+* Tested Dice100 on the student server and added a method due to
+  PHP version of the student server is less than PHP 7.3.0.
+* Added rules to the game on the landing side in content.

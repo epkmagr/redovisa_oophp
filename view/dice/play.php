@@ -13,52 +13,62 @@ namespace Anax\View;
         <th>Namn</th>
         <th>Poäng</th>
     </tr>
-    <tr>
-        <td>1</td>
-        <td><?= $game->getCurrentPlayer(0)->getName() ?></td>
-        <td><?= $game->getCurrentPlayer(0)->getScore() ?></td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td><?= $game->getCurrentPlayer(1)->getName() ?></td>
-        <td><?= $game->getCurrentPlayer(1)->getScore() ?></td>
-    </tr>
+    <?php for ($i = 0; $i < $noOfPlayers; $i++) : ?>
+        <tr>
+            <?php $player = $game->getCurrentPlayer($i) ?>
+            <?php $nr = $i + 1 ?>
+            <td><?= $nr ?></td>
+            <td><?= $player->getName() ?></td>
+            <td><?= $player->getScore() ?></td>
+        </tr>
+    <?php endfor ?>
 </table>
 
 <div>
-    <h4>Aktuell spelare</h4>
+    <?php $nr = $startOrder + 1 ?>
+    <h4>Aktuell spelare:  <?= $nr ?></h4>
 
     <p>Antalet tärningar per runda: <?= $noOfDices ?>.</p>
 
-    <?php if ($startOrder === 0) : ?>
-        <p>Spelare 1: <?= $game->getCurrentPlayer(0)->getName() ?></p>
-    <?php endif ?>
-
-    <?php if ($startOrder === 1) : ?>
-        <p>Spelare 2: <?= $game->getCurrentPlayer(1)->getName() ?></p>
-    <?php endif ?>
+    <?php $nr = $startOrder + 1 ?>
+    <p>Namn på spelare <?= $nr ?>: <?= $game->getCurrentPlayer($startOrder)->getName() ?></p>
 
     <?php if ($invalidNumber) : ?>
         <form class="dice100" method=post>
             <input type="submit" name="roundEnd" value="Lämna över turen">
         </form>
     <?php else : ?>
-        <form class="dice100" method=post>
-            <input type="submit" name="roll" value="Slå tärningarna">
-            <input type="submit" name="roundEnd" value="Spara & avsluta rundan">
-        </form>
+        <?php if ($startOrder === 0) : ?>
+            <?php if ($computerContinues) : ?>
+                <form class="dice100" method=post>
+                    <input type="submit" name="roll" value="Simulera datorns runda">
+                </form>
+            <?php else : ?>
+                <form class="dice100" method=post>
+                    <input type="submit" name="roundEnd" value="Lämna över turen">
+                </form>
+            <?php endif ?>
+        <?php else : ?>
+            <form class="dice100" method=post>
+                <input type="submit" name="roll" value="Slå tärningarna">
+                <input type="submit" name="roundEnd" value="Spara & avsluta rundan">
+            </form>
+        <?php endif ?>
     <?php endif ?>
 
-    <?php if ($roll && $values != null) : ?>
+    <?php if ($roll && $graphicValues != null) : ?>
         <p class="dice-sprite">
-            <?php foreach ($values as $value) : ?>
-                <i class="dice-sprite dice-<?= $value ?>"></i>
+            <?php foreach ($graphicValues as $value) : ?>
+                <i class="dice-sprite <?= $value ?>"></i>
             <?php endforeach; ?>
         </p>
 
-        <p><?= implode(", ", $values) ?></p>
-
-        <p>Summa tärningar i rundan: <?= $tmpScore?></p>
+        <p>
+            Summa tärningar i rundan: <?= $tmpScore?>.
+            <?php if ($invalidNumber) : ?>
+                Tyvärr du fick 1, turen går över till nästa spelare!
+            <?php endif ?>
+        </p>
     <?php endif ?>
 </div>
 

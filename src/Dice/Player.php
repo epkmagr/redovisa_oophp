@@ -83,22 +83,23 @@ class Player
     }
 
     /**
-     * Do a round and return the sum of points of the round. If the round is
-     * unvalid, i.e. containing 1, then the sum is 0.
+     * Get the sum of dices in a hand.
      *
-     * @return int $sum with the sum of points of this round, 0 if unvalid hand.
+     * @return int as the sum of the dices in the hand of the player.
      */
-    public function doRound()
+    public function getSumOfHand()
     {
-        $this->hand->roll();
-        $values = $this->hand->values();
-        if (in_array(1, $values)) {
-            $sum = 0;
-        } else {
-            $sum = $this->hand->sum();
-        }
+        return $this->hand->sum();
+    }
 
-        return $sum;
+    /**
+     * Roll the dices
+     *
+     * @return array with a graphical representation of last roll of the dices.
+     */
+    public function getGraphicValues()
+    {
+        return $this->hand->graphicValues();
     }
 
     /**
@@ -111,15 +112,5 @@ class Player
         $this->hand->roll();
 
         return $this->hand->values();
-    }
-
-    /**
-     * Roll the dices
-     *
-     * @return array with a graphical representation of last roll of the dices.
-     */
-    public function getGraphicValues()
-    {
-        return $this->hand->graphicValues();
     }
 }

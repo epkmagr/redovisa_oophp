@@ -29,4 +29,16 @@ class DiceGraphicTest extends TestCase
         $res = $diceGraphic->graphic();
         $this->assertStringContainsString("dice-", $res);
     }
+
+    /**
+     * Construct object and verify that the object is of expected instance.
+     * Use a valid argument.
+     */
+    public function testGraphicValue()
+    {
+        $diceGraphic = new DiceGraphic();
+        $res = $diceGraphic->graphic();
+        $exp = "dice-" . $diceGraphic->getLastRoll();
+        $this->assertStringContainsString($exp, $res);
+    }
 }

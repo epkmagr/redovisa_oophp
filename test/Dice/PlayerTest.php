@@ -87,36 +87,27 @@ class PlayerTest extends TestCase
     public function testGetGraphicValues()
     {
         $player = new Player("Marie");
-        $player->doRound();
+        $player->rollAndReturnHand();
         $res = $player->getGraphicValues();
         $exp = "dice-";
         $this->assertStringContainsString($exp, $res[0]);
     }
 
     /**
-     * Construct object and do a round until $sum = 0. Dices with a 1.
-     * Use no arguments.
+     * Test to get sum of hand.
      */
-    public function testDoRoundUntilZero()
+    public function testGetSumOfHand()
     {
         $player = new Player("Marie");
-        do {
-            $sum = $player->doRound();
-            $this->assertGreaterThanOrEqual(0, $sum);
-        } while ($sum === 0);
-    }
-
-    /**
-     * Construct object and do a round until $sum != 0. Dices without a 1.
-     * Use no arguments.
-     */
-    public function testDoRound()
-    {
-        $player = new Player("Marie");
-        do {
-            $sum = $player->doRound();
-            $this->assertGreaterThanOrEqual(0, $sum);
-        } while ($sum > 0);
+        $player->rollAndReturnHand();
+        $res = $player->getSumOfHand();
+        $values = $player->getGraphicValues();
+        $exp = 0;
+        $limit = count($values);
+        for ($i=0; $i<$limit; $i++) {
+            $exp += substr($values[$i], 5, 1);
+        }
+        $this->assertStringContainsString($exp, $res);
     }
 
     /**

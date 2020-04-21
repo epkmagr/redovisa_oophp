@@ -55,11 +55,22 @@ class Dice100Test extends TestCase
      * Construct object and verify that the object is of expected instance.
      * Use a faulty argument.
      */
-    public function testCreateObjectWithFaultyArgument()
+    public function testCreateObjectWithFaultyNegativeArgument()
     {
         $this->expectException(DiceException::class);
         new Dice100(-1);
     }
+
+    /**
+     * Construct object and verify that the object is of expected instance.
+     * Use a faulty argument. Only 6 players are allowed.
+     */
+    public function testCreateObjectWithFaultyArgument()
+    {
+        $this->expectException(DiceException::class);
+        new Dice100(7);
+    }
+
 
     /**
      * Test get current player.
@@ -74,105 +85,81 @@ class Dice100Test extends TestCase
     }
 
     /**
-     * Test the start order.
+     * Test get current player. Try to get a player that not exists and
+     * null will be returned.
      */
-    public function testStartOrder()
+    public function testGetCurrentPlayerNull()
     {
         $game = new Dice100();
-        $res = $game->startOrder();
-        $exp = 1;
+        $res = $game->getCurrentPlayer(10);
+        $exp = null;
         $this->assertEquals($exp, $res);
     }
 
     /**
-     * Construct object and test to roll the dices and get values in return.
+     * Construct object and test if the roll of the dices is valid or not.
      * Use valid arguments.
      */
     public function testDoRound()
     {
         $game = new Dice100();
         $player1 = $game->getCurrentPlayer(0);
-        $values = $game->doRound($player1);
-        $exp = $player1->getNoOfDices();
-        $this->assertGreaterThanOrEqual(2, array_sum($values));
-    }
-
-    /**
-     * Construct object and test to end the round and save score. The score of
-     * the current player is 0. The round score is 43. The new score is 43.
-     * Use valid arguments.
-     */
-    public function testEndRound43()
-    {
-        $game = new Dice100();
-        $player1 = $game->getCurrentPlayer(0);
-        $expScore = 43;
-        $game->endRound($player1, $expScore);
-        $this->assertEquals($expScore, $player1->getScore());
-    }
-
-    /**
-     * Construct object and test to end the round and save score. The score of
-     * the current player is 20. The round score is 43. The new score is 63.
-     * Use valid arguments.
-     */
-    public function testEndRound63()
-    {
-        $game = new Dice100();
-        $player1 = $game->getCurrentPlayer(0);
-        $player1->setScore(20);
-        $roundScore = 43;
-        $game->endRound($player1, $roundScore);
-        $expScore = 63;
-        $this->assertEquals($expScore, $player1->getScore());
-    }
-
-    /**
-     * Construct object and test to end the round and save score. The score of
-     * the current player is 20. The round score is 0. The new score is 20.
-     * Use valid arguments.
-     */
-    public function testEndRound20()
-    {
-        $game = new Dice100();
-        $player1 = $game->getCurrentPlayer(0);
-        $player1->setScore(20);
-        $roundScore = 0;
-        $game->endRound($player1, $roundScore);
-        $expScore = 20;
-        $this->assertEquals($expScore, $player1->getScore());
-    }
-
-    /**
-     * Test win when score is lower than GOAL.
-     */
-    public function testWinFalse()
-    {
-        $game = new Dice100();
-        $res = $game->win(19);
-        $exp = false;
+        $res = $game->doRound($player1);
+        $values = $player1->getGraphicValues();
+        if (in_array("dice-1", $values, true)) {
+            $exp = false;
+        } else {
+            $exp = true;
+        }
         $this->assertEquals($exp, $res);
     }
 
     /**
-     * Test win true when score is higher than GOAL.
+     * Run the testDoRound 10 times to test unvalid roll of dice.
+     * Use valid arguments.
      */
-    public function testWinTrue()
+    public function testDoRound10Times()
     {
-        $game = new Dice100();
-        $res = $game->win(102);
-        $exp = true;
+        for ($i = 0; $i < 10; $i++) {
+            $this->testDoRound();
+        }
+    }
+
+    /**
+     * Construct object and test the startOrder from the first dice in the hand.
+     * of the dices of this round is above the limit.
+     * Use a valid arguments, 2 players and 5 dices per hand.
+     */
+    public function testStartOrder2Players()
+    {
+        $game = new Dice100(2, 5);
+        $startValues = array();
+
+        $res = $game->startOrder();
+        for ($i = 0; $i < $game->getTheNumberOfPlayers(); $i++) {
+            $startValues[$i] = $game->getCurrentPlayer($i)->getGraphicValues()[0];
+        }
+        arsort($startValues);
+        $exp = array_key_first($startValues);
         $this->assertEquals($exp, $res);
     }
 
     /**
-     * Test win true when score is equal to GOAL.
+     * Construct object and test the startOrder from the first dice in the hand.
+     * of the dices of this round is above the limit.
+     * Use a valid arguments, 5 players and 5 dices per hand.
      */
-    public function testWinTrue100()
+    public function testStartOrder5Players()
     {
-        $game = new Dice100();
-        $res = $game->win(100);
-        $exp = true;
+        $game = new Dice100(5, 5);
+        $startValues = array();
+
+        $res = $game->startOrder();
+        for ($i = 0; $i < $game->getTheNumberOfPlayers(); $i++) {
+            $startValues[$i] = $game->getCurrentPlayer($i)->getGraphicValues()[0];
+        }
+        arsort($startValues);
+        $exp = array_key_first($startValues);
         $this->assertEquals($exp, $res);
     }
 }

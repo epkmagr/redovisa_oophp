@@ -10,8 +10,11 @@ namespace Anax\View;
 </p>
 
 <form method=post>
-    <label for="changeDefault">Vill du ändra på inställningarna?</label>
-    <p><input type="radio" name="yes_no" value= "Ja">Ja</input></p>
-    <p><input type="radio" name="yes_no"  value= "Nej" checked>Nej (Default)</input></p>
-    <input type="submit" name="changeDefault" value="Initiera spelet">
+    <fieldset>
+        <legend>Ange spelarnas namn</legend>
+        <label for="changeDefault">Vill du ändra på inställningarna?</label>
+        <p><input type="radio" name="yes_no" value= "Ja">Ja</input></p>
+        <p><input type="radio" name="yes_no"  value= "Nej" checked>Nej (Default)</input></p>
+        <input type="submit" name="changeDefault" value="Initiera spelet">
+    </fieldset>
 </form>

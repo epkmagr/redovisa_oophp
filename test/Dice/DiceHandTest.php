@@ -41,10 +41,20 @@ class DiceHandTest extends TestCase
      * Construct object and verify that the object is of expected instance.
      * Use a faulty argument.
      */
-    public function testCreateObjectWithFaultyArgument()
+    public function testCreateObjectWithFaultyNegativeArgument()
     {
         $this->expectException(DiceException::class);
         new DiceHand(-1);
+    }
+
+    /**
+     * Construct object and verify that the object is of expected instance.
+     * Use a faulty argument. Only 10 dices are allowed.
+     */
+    public function testCreateObjectWithFaultyArgument()
+    {
+        $this->expectException(DiceException::class);
+        new DiceHand(11);
     }
 
     /**
