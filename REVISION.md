@@ -71,3 +71,10 @@ v3.0.2 (2020-04-21)
 * Tested Dice100 on the student server and added a method due to
   PHP version of the student server is less than PHP 7.3.0.
 * Added rules to the game on the landing side in content.
+
+v4.0.0 (2020-04-)
+------------------------
+
+* First draft of kmom04.
+* Added controller and tests for Guess game.
+* Added controller and tests for Dice 100 game.
