@@ -15,8 +15,12 @@ use Anax\Response\ResponseUtility;
  * Test the controller like it would be used from the router,
  * simulating the actual router paths and calling it directly.
  */
-class DiceControllerTest extends TestCase
+class DiceControllerStartAndChangeDefaultTest extends TestCase
 {
+    /**
+     * @var DiceController $controller   The DiceController to be tested.
+     * @var DIMagic  $app  The service container $di to contain $app as a service.
+     */
     private $controller;
     private $app;
 
@@ -39,6 +43,10 @@ class DiceControllerTest extends TestCase
         $this->controller = new DiceController();
         $this->controller->setApp($app);
         // $this->controller->initialize();
+
+        // Create a game and store in session.
+        $game = new Dice100();
+        $this->app->session->set("dice100game", $game);
     }
 
     /**
@@ -62,6 +70,15 @@ class DiceControllerTest extends TestCase
     }
 
     /**
+     * Call the controller catchAll ANY.
+     */
+    public function testCatchAllGet()
+    {
+        $res = $this->controller->catchAll();
+        $this->assertNull($res);
+    }
+
+    /**
      * Call the controller start action GET.
      */
     public function testStartActionGet()
@@ -80,7 +97,7 @@ class DiceControllerTest extends TestCase
         $this->app->request->setGlobals([
             "post" => [
                 "changeDefault" => true,
-                "yes_no" => "Nej",
+                "yesOrNo" => "Nej",
             ]
         ]);
         $res = $this->controller->startActionPost();

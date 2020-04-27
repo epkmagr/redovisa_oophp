@@ -7,16 +7,16 @@ use Anax\DI\DIMagic;
 use PHPUnit\Framework\TestCase;
 use Anax\Response\ResponseUtility;
 
-// use Anax\Page\Page;
-// use Anax\View\View;
-// use Anax\View\ViewCollection;
-
 /**
  * Test the controller like it would be used from the router,
  * simulating the actual router paths and calling it directly.
  */
-class DiceControllerTest extends TestCase
+class DiceControllerInitAndStartOrderTest extends TestCase
 {
+    /**
+     * @var DiceController $controller   The DiceController to be tested.
+     * @var DIMagic  $app  The service container $di to contain $app as a service.
+     */
     private $controller;
     private $app;
 
@@ -39,6 +39,10 @@ class DiceControllerTest extends TestCase
         $this->controller = new DiceController();
         $this->controller->setApp($app);
         // $this->controller->initialize();
+
+        // Create a game and store in session.
+        $game = new Dice100();
+        $this->app->session->set("dice100game", $game);
     }
 
     /**

@@ -6,6 +6,7 @@ use Anax\Controller\SampleAppController;
 use Anax\DI\DIMagic;
 use PHPUnit\Framework\TestCase;
 use Anax\Response\ResponseUtility;
+use phpmock\MockBuilder;
 
 // use Anax\Page\Page;
 // use Anax\View\View;
@@ -17,8 +18,14 @@ use Anax\Response\ResponseUtility;
  */
 class DiceControllerTest extends TestCase
 {
+    /**
+     * @var DiceController $controller   The DiceController to be tested.
+     * @var DIMagic  $app  The service container $di to contain $app as a service.
+     * @var MockBuilder  $myMock  A MockBuilder mock object used for testing.
+     */
     private $controller;
     private $app;
+    private $myMock;
 
     /**
      * Setup the controller, before each testcase, just like the router
@@ -27,6 +34,11 @@ class DiceControllerTest extends TestCase
     protected function setUp(): void
     {
         global $di;
+
+        $this->myMock = $this
+            ->getMockBuilder(Dice100::class)
+            ->setMethods(['doRound'])
+            ->getMock();
 
         // Init service container $di to contain $app as a service
         $di = new DIMagic();
@@ -39,6 +51,10 @@ class DiceControllerTest extends TestCase
         $this->controller = new DiceController();
         $this->controller->setApp($app);
         // $this->controller->initialize();
+
+        // Create a game and store in session.
+        $game = new Dice100();
+        $this->app->session->set("dice100game", $game);
     }
 
     /**
@@ -80,19 +96,68 @@ class DiceControllerTest extends TestCase
     /**
      * Call the controller play action POST make roll and do not continue.
      */
-    public function testPlayOrderActionPostRoll()
+    public function testPlayOrderActionPostRollNotContinue()
     {
         $this->app->request->setGlobals([
             "post" => [
                 "roll" => true,
             ]
         ]);
+        $this->app->session->set("dice100game", $this->myMock);
+        $this->myMock->method("doRound")->willReturn(false);
+
         $res = $this->controller->playActionPost();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        // $tmpScore = $this->app->session->get("tmpScore");
-        // $this->assertEquals(0, $tmpScore);
-        // $invalidNumber = $this->app->session->get("invalidNumber");
-        // $this->assertEquals(true, $invalidNumber);
+        $invalidNumber = $this->app->session->get("invalidNumber");
+        $this->assertTrue($invalidNumber);
+    }
+
+    /**
+     * Call the controller play action POST make roll, continue and win.
+     */
+    public function testPlayOrderActionPostRollWin()
+    {
+        $this->app->request->setGlobals([
+            "post" => [
+                "roll" => true,
+            ]
+        ]);
+        $game = new Dice100();
+        $game->getCurrentPlayer(0)->setScore(82);
+        $this->app->session->set("dice100game", $this->myMock);
+        $this->app->session->set("tmpScore", 120);
+        $this->app->session->set("startOrder", 0);
+        $this->myMock->method("doRound")->willReturn(true);
+
+        $res = $this->controller->playActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $game = $this->app->session->get("dice100game");
+        $winner = $this->app->session->get("winner");
+        $this->assertNotNull($winner);
+    }
+
+    /**
+     * Call the controller play action POST make roll and the computer continues.
+     */
+    public function testPlayOrderActionPostRollComputerContinues()
+    {
+        $this->app->request->setGlobals([
+            "post" => [
+                "roll" => true,
+            ]
+        ]);
+        $game = new Dice100();
+        $game->getCurrentPlayer(0)->setScore(62);
+        $game->getCurrentPlayer(1)->setScore(12);
+        $this->app->session->set("dice100game", $this->myMock);
+        $this->app->session->set("tmpScore", 4);
+        $this->app->session->set("startOrder", 0);
+        $this->myMock->method('doround')->willReturn(true);
+
+        $res = $this->controller->playActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $computerContinues = $this->app->session->get("computerContinues");
+        $this->assertTrue($computerContinues);
     }
 
     /**
@@ -143,23 +208,6 @@ class DiceControllerTest extends TestCase
         $newScore = $game->getCurrentPlayer(5)->getScore();
         $this->assertEquals(30, $newScore);
     }
-
-    // /**
-    //  * Call the controller play action POST make the round end.
-    //  */
-    // public function testPlayOrderActionPostEndRoundGoToFirst()
-    // {
-    //     $this->app->request->setGlobals([
-    //         "post" => [
-    //             "endRound" => true,
-    //         ]
-    //     ]);
-    //     $this->app->session->set("startOrder", 1);
-    //     $res = $this->controller->playActionPost();
-    //     $this->assertInstanceOf(ResponseUtility::class, $res);
-    //     $newStartOrder = $this->app->session->get("startOrder");
-    //     $this->assertEquals(0, $newStartOrder);
-    // }
 
     /**
      * Help method to check if the object constains the location, if so
