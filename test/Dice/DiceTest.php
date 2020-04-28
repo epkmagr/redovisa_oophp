@@ -54,23 +54,12 @@ class DiceTest extends TestCase
 
     /**
      * Construct object and roll the dice.
-     * Use faulty argument when performing the roll.
-     */
-    public function testFaultyRollNegativeSides()
-    {
-        $this->expectException(DiceException::class);
-        $dice = new Dice();
-        $dice->roll(-1);
-    }
-
-    /**
-     * Construct object and roll the dice.
      * Use a strange argument when performing the roll.
      */
     public function testRollOneSide()
     {
-        $dice = new Dice();
-        $dice->roll(1);
+        $dice = new Dice(1);
+        $dice->roll();
         $res = $dice->getLastRoll();
         $this->assertLessThanOrEqual(1, $res);
         $this->assertGreaterThanOrEqual(1, $res);

@@ -7,6 +7,8 @@ Välkommen till spelet *Dice 100*.
 
 [Starta ett nytt spel!](dice100/start)
 
+Controllerimplementation: [Starta ett nytt spel!](dice1/start)
+
 Regler
 ---------------------------
 

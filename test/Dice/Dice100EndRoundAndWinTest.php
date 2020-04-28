@@ -87,4 +87,23 @@ class Dice100EndRoundAndWinTest extends TestCase
         $exp = true;
         $this->assertEquals($exp, $res);
     }
+
+    /**
+     * Test to print a histogram.
+     */
+    public function testPrintHistogram()
+    {
+        $game = new Dice100();
+        $histogram = new Histogram();
+        $diceHistogram = new DiceHistogram();
+
+        for ($i = 0; $i < 10; $i++) {
+            $diceHistogram->roll();
+        }
+        $exp = $diceHistogram->printHistogram();
+        $histogram->injectData($diceHistogram);
+        $game->setHistogram($histogram);
+        $res = $game->getHistogram();
+        $this->assertEquals($exp, $res);
+    }
 }

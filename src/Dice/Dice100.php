@@ -22,10 +22,12 @@ class Dice100
      * @var int GOAL        The goal to reach first to win.
      * @var Player $players Array consisting of the players.
      * @var int $currentPlayer The current player.
+     * @var Histogram $histogram The histogram of the round.
      */
     const GOAL = 100;
     private $players;
     private $currentPlayer;
+    private $histogram;
 
     /**
      * Constructor to initiate the dicehand with a number of dices.
@@ -44,6 +46,7 @@ class Dice100
             $this->players[$i]  = new Player("", $noOfDices);
         }
         $this->currentPlayer = 0;
+        $this->histogram = new Histogram();
     }
 
     /**
@@ -70,7 +73,6 @@ class Dice100
     {
         return count($this->players);
     }
-
 
     /**
      * Desides the start order of the players, the one with the highest value
@@ -108,7 +110,11 @@ class Dice100
      */
     public function doRound(Player $currentPlayer)
     {
+        $newHistogram = new DiceHistogram();
+
         $values = $currentPlayer->rollAndReturnHand();
+        $newHistogram->appendHistogramSerie($values);
+        $this->histogram->injectData($newHistogram);
         if (in_array(1, $values, true)) {
             return false;
         } else {
@@ -228,5 +234,26 @@ class Dice100
         } else {
             return false; // computer is in lead but will play safe
         }
+    }
+
+    /**
+     * Set the histogram.
+     *
+     * @var Histogram $histogram The histogram to be set.
+     * @return void.
+     */
+    public function setHistogram(Histogram $histogram)
+    {
+        $this->histogram = $histogram;
+    }
+
+    /**
+     * Get the histogram.
+     *
+     * @return string representing the histogram.
+     */
+    public function getHistogram()
+    {
+        return $this->histogram->printHistogram();
     }
 }

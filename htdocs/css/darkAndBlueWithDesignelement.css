@@ -6477,3 +6477,14 @@ tr:hover {
 pre {
   background-color: #89bad9;
 }
+/* Dice100 */
+.presentation {
+  display: flex;
+  justify-content: flex-flex-start;
+}
+.col1 {
+  margin-right: 4em;
+}
+.col2 pre {
+  padding-left: 6px;
+}

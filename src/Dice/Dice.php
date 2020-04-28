@@ -42,15 +42,11 @@ class Dice
     /**
      * Roll the Dice and return the value.
      *
-     * @param 6|int    $sides  The number of sides of the dice. Default = 6.
      * @return void
      */
-    public function roll(int $sides = 6)
+    public function roll()
     {
-        if ($sides < 1) {
-            throw new DiceException("The dice must have 1 or more sides.");
-        }
-        $this->lastRoll = mt_rand(1, $sides);
+        $this->lastRoll = mt_rand(1, $this->sides);
     }
 
     /**

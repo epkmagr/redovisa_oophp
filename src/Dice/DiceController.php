@@ -25,22 +25,6 @@ class DiceController implements AppInjectableInterface
     /**
      * @var string $db a sample member variable that gets initialised
      */
-    // private $db = "not active";
-
-    // /**
-    //  * The initialize method is optional and will always be called before the
-    //  * target method/action. This is a convienient method where you could
-    //  * setup internal properties that are commonly used by several methods.
-    //  *
-    //  * @return void
-    //  */
-    // public function initialize() : void
-    // {
-    //     // Use to initialise member variables.
-    //     $this->db = "active";
-    //
-    //     // Use $this->app to access the framework services.
-    // }
 
     /**
      * This is the debug method action, it handles:
@@ -288,6 +272,7 @@ class DiceController implements AppInjectableInterface
         $name5 != null ? $game->getCurrentPlayer(4)->setName($name5) : null;
         $name6 != null ? $game->getCurrentPlayer(5)->setName($name6) : null;
         $session->set("dice100game", $game);
+        $session->set("roll", null);
 
         return $response->redirect("dice1/startOrder");
     }
@@ -450,6 +435,7 @@ class DiceController implements AppInjectableInterface
         if ($roll) {
             $continue = $game->doRound($thePlayer);
             $graphicValues = $thePlayer->getGraphicValues();
+            $session->set("dice100game", $game);
             $session->set("graphicValues", $graphicValues);
             if (!$continue) {
                 $session->set("tmpScore", 0);

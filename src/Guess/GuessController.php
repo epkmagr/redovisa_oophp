@@ -109,7 +109,7 @@ class GuessController implements AppInjectableInterface
         } else {
             $page->add("guess1/play", $data);
         }
-        $page->add("guess1/debug");
+        // $page->add("guess1/debug");
 
         return $page->render([
             "title" => $title,

@@ -5,24 +5,34 @@ namespace Anax\View;
 
 <h1>Tärningsspel 100</h1>
 
-<h4>Poängställning</h4>
+<div class="presentation">
+    <div class="col1">
+        <h4>Poängställning</h4>
 
-<table>
-    <tr>
-        <th>Spelare</th>
-        <th>Namn</th>
-        <th>Poäng</th>
-    </tr>
-    <?php for ($i = 0; $i < $noOfPlayers; $i++) : ?>
-        <tr>
-            <?php $player = $game->getCurrentPlayer($i) ?>
-            <?php $nr = $i + 1 ?>
-            <td><?= $nr ?></td>
-            <td><?= $player->getName() ?></td>
-            <td><?= $player->getScore() ?></td>
-        </tr>
-    <?php endfor ?>
-</table>
+        <table>
+            <tr>
+                <th>Spelare</th>
+                <th>Namn</th>
+                <th>Poäng</th>
+            </tr>
+            <?php for ($i = 0; $i < $noOfPlayers; $i++) : ?>
+                <tr>
+                    <?php $player = $game->getCurrentPlayer($i) ?>
+                    <?php $nr = $i + 1 ?>
+                    <td><?= $nr ?></td>
+                    <td><?= $player->getName() ?></td>
+                    <td><?= $player->getScore() ?></td>
+                </tr>
+            <?php endfor ?>
+        </table>
+    </div>
+
+    <div class="col2">
+        <h4>Histogram</h4>
+        <pre><?= $game->getHistogram() ?></pre>
+    </div>
+
+</div>
 
 <div>
     <?php $nr = $startOrder + 1 ?>

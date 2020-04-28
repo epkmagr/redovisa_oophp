@@ -2,8 +2,8 @@
 namespace Epkmagr\Dice;
 
 /**
- * Class DiceGraphic, a class with properties and methods that are
- * using a namespace
+ * Class DiceGraphic, a class that extends the dice class with graphic
+ * representation.
  *
  * @author Marie Grahn, mbfs17@student.bth.se
  */

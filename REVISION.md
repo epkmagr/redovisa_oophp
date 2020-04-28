@@ -72,9 +72,18 @@ v3.0.2 (2020-04-21)
   PHP version of the student server is less than PHP 7.3.0.
 * Added rules to the game on the landing side in content.
 
-v4.0.0 (2020-04-)
+v4.0.0 (2020-04-25)
 ------------------------
 
 * First draft of kmom04.
 * Added controller and tests for Guess game.
 * Added controller and tests for Dice 100 game.
+
+v4.0.1 (2020-04-28)
+------------------------
+
+* Added report of kmom04.
+* Added histogram with interface and trait.
+* Added tests for the new code.
+* Updated the tests and code coverage image.
+* Added the games via controller on the landing page for each game.

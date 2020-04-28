@@ -16,6 +16,6 @@ namespace Anax\View;
         <?php for ($i = 2; $i <= $noOfPlayers; $i++) : ?>
             <p><label>Namn <?= $i ?>:  <input type="text" name="name<?= $i ?>" value="Spelare <?= $i ?>"</label></p>
         <?php endfor ?>
-        <input type="submit" name="doit" value="Bestäm startordning">
+        <input type="submit" name="doit" value="Välj namn">
     </fieldset>
 </form>
