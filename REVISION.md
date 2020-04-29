@@ -87,3 +87,8 @@ v4.0.1 (2020-04-28)
 * Added tests for the new code.
 * Updated the tests and code coverage image.
 * Added the games via controller on the landing page for each game.
+
+v5.0.0 (2020-04-29)
+------------------------
+
+* First draft of kmom05.
