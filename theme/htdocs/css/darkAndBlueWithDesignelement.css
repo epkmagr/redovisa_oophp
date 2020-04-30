@@ -6476,6 +6476,7 @@ tr:hover {
 .debug-info,
 pre {
   background-color: #89bad9;
+  padding-left: 6px;
 }
 /* Dice100 */
 .presentation {

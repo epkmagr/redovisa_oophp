@@ -27,7 +27,7 @@ class MovieController implements AppInjectableInterface
     /**
      * @var string $db a sample member variable that gets initialised
      */
-    private $db = "not active";
+    private $db;
 
 
 
@@ -41,13 +41,13 @@ class MovieController implements AppInjectableInterface
     public function initialize() : void
     {
         // Use to initialise member variables.
-        $this->db = "active";
-
-        // Use $this->app to access the framework services.
+        // connect to the database
+        $this->app->db->connect();
+        $this->db = $this->app->db;
     }
 
     /**
-     * This is the init method action that initiate the Guess game, it handles:
+     * This is the showAll method action that shows all the movies, it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
@@ -61,10 +61,10 @@ class MovieController implements AppInjectableInterface
 
         $title = "Movie database | oophp";
 
-        $this->app->db->connect();
         $sql = "SELECT * FROM movie;";
-        $res = $this->app->db->executeFetchAll($sql);
+        $res = $this->db->executeFetchAll($sql);
 
+        $page->add("movie1/header");
         $page->add("movie1/showAll", [
             "res" => $res,
         ]);
@@ -75,48 +75,31 @@ class MovieController implements AppInjectableInterface
     }
 
     /**
-     * This is the play method action which shows the status of the guess game,
-     * it handles:
+     * This is the reset method GET action that shows the reset, it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
      * @return string
      */
-    public function playActionGet() : object
+    public function resetActionGet() : object
     {
-        $title = "Play the game";
         // Framework services
-        $session = $this->app->session;
         $page = $this->app->page;
+        $session = $this->app->session;
 
-        // Session variables
-        $game = $session->get("game", null);
-        $res = $session->get("res", null);
-        $guess = $session->get("guess", null);
-        $cheat = $session->get("cheat", null);
+        $title = "Resetting the database";
 
-        // Clean session variables
-        $session->set("res", null);
-        $session->set("guess", null);
-        $session->set("cheat", null);
+        $reset = $session->get("reset");
+        $session->set("reset", null);
 
-        $data = [
-            "guess" => $guess ?? null,
-            "number" => $game->number(),
-            "tries" => $game->tries(),
-            "res" => $res,
-            "cheat" => $cheat ?? null
-        ];
+        $dbConfig = $this->app->configuration->load("database");
 
-        if ($res == "correct") {
-            $page->add("guess1/result", $data);
-        } elseif ($game->tries() == 0) {
-            $page->add("guess1/gameover", $data);
-        } else {
-            $page->add("guess1/play", $data);
-        }
-        // $page->add("guess1/debug");
+        $page->add("movie1/header");
+        $page->add("movie1/reset", [
+            "reset" => $reset,
+            "dbConfig" => $dbConfig['config'],
+        ]);
 
         return $page->render([
             "title" => $title,
@@ -124,75 +107,201 @@ class MovieController implements AppInjectableInterface
     }
 
     /**
-     * This is the play method action which plays the guess game, it handles:
+     * This is the reset method POST action that actually resets the movie
+     * database, it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
      * @return string
      */
-    public function playActionPost() : object
+    public function resetActionPost() : object
     {
         // Framework services
-        $session = $this->app->session;
         $response = $this->app->response;
         $request = $this->app->request;
+        $session = $this->app->session;
 
-        // Incoming variables
-        $guess = $request->getPost("guess");
-        $doGuess = $request->getPost("doGuess");
-        $initGame = $request->getPost("initGame");
-        $cheat = $request->getPost("cheat");
-        $res = null;
+        $reset = $request->getPost("reset");
+        $session->set("reset", $reset);
 
-        // Session variables
-        $game = $session->get("game"); // null is default from the framework
+        return $response->redirect("movie1/reset");
+    }
 
-        if ($doGuess) {
-            try {
-                $res = $game->makeGuess($guess);
-                $session->set("game", $game);
-                $session->set("res", $res);
-                $session->set("guess", $guess);
-            } catch (GuessException $guessExc) {
-                // echo "Got exception: " . get_class($guessExc) . "<hr>";
-                $session->set("game", $game);
-                $session->set("res", $guessExc->getMessage());
-            }
-        } elseif ($cheat) {
-            $session->set("cheat", $cheat);
-        } elseif ($initGame) {
-            return $response->redirect("guess1/init");
+    /**
+     * This is the select method action that shows all the movies in raw
+     * print, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function selectAction() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+
+        $title = "Movie database | oophp";
+
+        $sql = "SELECT * FROM movie;";
+        $res = $this->db->executeFetchAll($sql);
+
+        $page->add("movie1/header");
+        $page->add("movie1/select", [
+            "sql"=> $sql,
+            "res" => $res,
+        ]);
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the searchTitle method GET action that shows the titles
+     * that was searched for in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function searchTitleActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "SELECT * WHERE title";
+
+        $doSearch = $session->get("doSearch");
+        $searchTitle = $session->get("searchTitle");
+        $session->set("doSearch", null);
+        $session->set("searchTitle", null);
+
+        $page->add("movie1/header");
+        if ($doSearch) {
+            $sql = "SELECT * FROM movie WHERE title LIKE ?;";
+            $res = $this->db->executeFetchAll($sql, [$searchTitle]);
+
+            $page->add("movie1/showAll", [
+                "res" => $res,
+            ]);
+        } else {
+            $page->add("movie1/searchTitle", [
+                "searchTitle" => $searchTitle,
+            ]);
         }
+        // $this->app->page->add("movie1/debug");
 
-        return $response->redirect("guess1/play");
+        return $page->render([
+            "title" => $title,
+        ]);
     }
 
     /**
-     * This is the debug method action, it handles:
+     * This is the searchTitle method POST action that searches for title
+     * in the movie database, it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
      * @return string
      */
-    public function debugAction() : string
+    public function searchTitleActionPost() : object
     {
-        // Deal with the action and return a response.
-        return "Debug my game";
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $doSearch = $request->getPost("doSearch");
+        $session->set("doSearch", $doSearch);
+        $searchTitle = $request->getPost("searchTitle");
+        $session->set("searchTitle", $searchTitle);
+
+        return $response->redirect("movie1/searchTitle");
     }
 
     /**
-     * This is the debug method action, it handles:
+     * This is the searchYear method GET action that shows the movies
+     * that matches the years you searched for in the movie database,
+     * it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
      * @return string
      */
-    public function indexAction() : string
+    public function searchYearActionGet() : object
     {
-        // Deal with the action and return a response.
-        return "INDEX!!";
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+        $res = "";
+
+        $title = "SELECT * WHERE year";
+
+        $doSearch = $session->get("doSearch");
+        $year1 = $session->get("year1");
+        $year2 = $session->get("year2");
+        $session->set("doSearch", null);
+        $session->set("year1", null);
+        $session->set("year2", null);
+
+        $page->add("movie1/header");
+        if ($doSearch) {
+            if ($year1 && $year2) {
+                $sql = "SELECT * FROM movie WHERE year >= ? AND year <= ?;";
+                $res = $this->db->executeFetchAll($sql, [$year1, $year2]);
+            } elseif ($year1) {
+                $sql = "SELECT * FROM movie WHERE year >= ?;";
+                $res = $this->db->executeFetchAll($sql, [$year1]);
+            } elseif ($year2) {
+                $sql = "SELECT * FROM movie WHERE year <= ?;";
+                $res = $this->db->executeFetchAll($sql, [$year2]);
+            }
+
+            $page->add("movie1/showAll", [
+                "res" => $res,
+            ]);
+        } else {
+            $page->add("movie1/searchYear", [
+                "year1" => $year1,
+                "year2" => $year2,
+            ]);
+        }
+        // $this->app->page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the searchYear method POST action that searches for year
+     * in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function searchYearActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $doSearch = $request->getPost("doSearch");
+        $session->set("doSearch", $doSearch);
+        $year1 = $request->getPost("year1");
+        $session->set("year1", $year1);
+        $year2 = $request->getPost("year2");
+        $session->set("year2", $year2);
+
+        return $response->redirect("movie1/searchYear");
     }
 }

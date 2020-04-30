@@ -92,3 +92,11 @@ v5.0.0 (2020-04-29)
 ------------------------
 
 * First draft of kmom05.
+
+v5.0.1 (2020-04-30)
+------------------------
+
+* Added show all my movies and reset database.
+* Added select, search title and search year.
+* Added tests for the code above.
+* All tested on student server.
