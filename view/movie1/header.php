@@ -6,7 +6,8 @@
 </head>
 <body>
 
-<navbar class="navbar">
+<navbar class="movieNavbar">
+    <h4></h4>
     <a href="select">SELECT *</a> |
     <br>
     <a href="showAll">Show all movies</a> |
@@ -15,7 +16,7 @@
     <a href="searchYear">Search year</a> |
     <a href="movieSelect">Select</a> |
     <a href="showAllSort">Show all sortable</a> |
-<!--    <a href="?route=show-all-paginate">Show all paginate</a> | -->
+    <a href="showAllPaginate">Show all paginate</a>
 </navbar>
 
 <h1>My Movie Database</h1>

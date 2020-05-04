@@ -477,9 +477,12 @@ class MovieController implements AppInjectableInterface
         $order = $session->get("order", "asc");
 
         // Incoming matches valid value sets
-        if (!(in_array($orderBy, $columns) && in_array($order, $orders))) {
-            alert("Not valid input for sorting.");
-        }
+        if (!in_array($orderBy, $columns)) {
+            $orderBy = "id";
+        };
+        if (!in_array($order, $orders)) {
+            $order = "asc";
+        };
 
         $sql = "SELECT * FROM movie ORDER BY $orderBy $order;";
         $res = $this->db->executeFetchAll($sql);
@@ -518,6 +521,102 @@ class MovieController implements AppInjectableInterface
         return $response->redirect("movie1/showAllSort");
     }
 
+    /**
+     * This is the showAllPaginate method action that shows all the movies paginated
+     * and sorts it in different ways, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function showAllPaginateActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Show, paginate movies";
+
+        // Get number of hits per page
+        $hits = $session->get("hits", 4);
+        if (!(is_numeric($hits) && $hits > 0 && $hits <= 8)) {
+            $hits = 4;
+        }
+
+        // Get max number of pages
+        $sql = "SELECT COUNT(id) AS max FROM movie;";
+        $max = $this->db->executeFetchAll($sql);
+        $max = ceil($max[0]->max / $hits);
+
+        // Get current page
+        $currentPage = $session->get("currentPage", 1);
+        if (!(is_numeric($hits) && $currentPage > 0 && $currentPage <= $max)) {
+            $currentPage = 1;
+        }
+        $offset = $hits * ($currentPage - 1);
+
+        // Only these values are valid
+        $columns = ["id", "title", "year", "image"];
+        $orders = ["asc", "desc"];
+
+        $orderBy = $session->get("orderby", "id");
+        $order = $session->get("order", "asc");
+
+        // Incoming matches valid value sets
+        if (!in_array($orderBy, $columns)) {
+            $orderBy = "id";
+        }
+        if (!in_array($order, $orders)) {
+            $order = "asc";
+        }
+
+        $sql = "SELECT * FROM movie ORDER BY $orderBy $order LIMIT $hits OFFSET $offset;";
+        $res = $this->db->executeFetchAll($sql);
+
+        $page->add("movie1/header");
+        $page->add("movie1/showAllPaginate", [
+            "res" => $res,
+            "max" => $max,
+            "currentPage" => $currentPage,
+        ]);
+        // $this->app->page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the showAllPaginate method POST action that posts the sort
+     * order of the movies in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function showAllPaginateActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $orderStrs = explode(" ", $request->getPost("order"));
+        $session->set("orderby", $orderStrs[0]);
+        $session->set("order", $orderStrs[1]);
+        $currentPage = $request->getPost("currentPage");
+        if ($currentPage != null) {
+            $session->set("currentPage", $currentPage);
+        }
+        $hits = $request->getPost("hits");
+        if ($hits != null) {
+            $session->set("hits", $hits);
+        }
+
+        return $response->redirect("movie1/showAllPaginate");
+    }
 
     /**
      * This is the method returns the number of the last inserted

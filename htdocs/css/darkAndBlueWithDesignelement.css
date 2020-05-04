@@ -6491,7 +6491,16 @@ pre {
 }
 /* Movie database */
 img.thumb {
-  max-width: 100px;
-  max-height: 100px;
   border: 2px solid white;
+}
+.movieNavbar a {
+  -webkit-box-shadow: 1px 2px 10px #89bad9;
+  -mox-box-shadow: 1px 2px 10px #89bad9;
+  box-shadow: 1px 2px 10px #89bad9;
+  padding: 2px 2px 2px 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.movieNavbar a:hover {
+  text-decoration: underline;
 }

@@ -26,7 +26,7 @@ if (!$res) {
     <tr>
         <td><?= $id ?></td>
         <td><?= $row->id ?></td>
-        <td><img class="thumb" src="../<?= $row->image ?>"></td>
+        <td><?= viewImage($row->image) ?></td>
         <td><?= $row->title ?></td>
         <td><?= $row->year ?></td>
     </tr>

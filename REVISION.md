@@ -101,7 +101,14 @@ v5.0.1 (2020-04-30)
 * Added tests for the code above.
 * All tested on student server.
 
-v5.0.2 (2020-5-04)
+v5.0.2 (2020-05-04)
 ------------------------
 
 * Added sort by columns.
+
+v5.0.3 (2020-05-04)
+------------------------
+
+* Added pagination.
+* Styled images with cimage.
+* Style movie database navbar.

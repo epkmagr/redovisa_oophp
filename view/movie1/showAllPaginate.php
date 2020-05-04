@@ -5,6 +5,12 @@ if (!$res) {
 ?>
 
 <form method="post">
+    <p>Items per page:
+        <?= hitsPerPage(2); ?>
+        <?= hitsPerPage(4); ?>
+        <?= hitsPerPage(8); ?>
+    </p>
+
     <table>
         <tr class="first">
             <th>Rad</th>
@@ -24,4 +30,11 @@ if (!$res) {
         </tr>
     <?php endforeach; ?>
     </table>
+
+    <p>
+        Pages:
+        <?php for ($i = 1; $i <= $max; $i++) : ?>
+            <?= getCurrentPage($i) ?>
+        <?php endfor; ?>
+    </p>
 </form>
