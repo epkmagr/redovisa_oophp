@@ -11,6 +11,6 @@
     <p>
         <input type="submit" name="doSearch" value="Search">
     </p>
-    <p><a href="?">Show all</a></p>
+    <p><a href="showAll">Show all</a></p>
     </fieldset>
 </form>

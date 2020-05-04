@@ -11,7 +11,7 @@ use Anax\Response\ResponseUtility;
  * Test the controller like it would be used from the router,
  * simulating the actual router paths and calling it directly.
  */
-class MovieControllerTest extends TestCase
+class MovieControllerSearchTest extends TestCase
 {
     /**
      * @var MovieController $controller   The DiceController to be tested.

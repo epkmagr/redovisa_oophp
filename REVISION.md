@@ -100,3 +100,8 @@ v5.0.1 (2020-04-30)
 * Added select, search title and search year.
 * Added tests for the code above.
 * All tested on student server.
+
+v5.0.2 (2020-5-04)
+------------------------
+
+* Added sort by columns.

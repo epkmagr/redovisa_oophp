@@ -304,4 +304,233 @@ class MovieController implements AppInjectableInterface
 
         return $response->redirect("movie1/searchYear");
     }
+
+    /**
+     * This is the movieSelect method GET action that shows the titles
+     * that can be selected in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function movieSelectActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $response = $this->app->response;
+        $session = $this->app->session;
+
+        $title = "Select a movie";
+
+        $movieId = $session->get("movieId");
+        $doAdd = $session->get("doAdd");
+        $doEdit = $session->get("doEdit");
+
+        $sql = "SELECT id, title FROM movie;";
+        $res = $this->db->executeFetchAll($sql);
+
+        $page->add("movie1/header");
+        if ($doAdd || ($doEdit && is_numeric($movieId))) {
+            return $response->redirect("movie1/movieEdit");
+        } else {
+            $page->add("movie1/movieSelect", [
+                "movies" => $res,
+            ]);
+        }
+        // $this->app->page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the movieSelect method POST action that selects a movie
+     * in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function movieSelectActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $movieId = $request->getPost("movieId");
+        $session->set("movieId", $movieId);
+        $doDelete = $request->getPost("doDelete");
+        $doAdd = $request->getPost("doAdd");
+        $doEdit = $request->getPost("doEdit");
+        $session->set("doAdd", $doAdd);
+        $session->set("doEdit", $doEdit);
+
+        if ($doDelete && is_numeric($movieId)) {
+            $sql = "DELETE FROM movie WHERE id = ?;";
+            $this->db->execute($sql, [$movieId]);
+        }
+
+        return $response->redirect("movie1/movieSelect");
+    }
+
+    /**
+     * This is the movieEdit method GET action that shows the movie
+     * that can be edited or added in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function movieEditActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "UPDATE movie";
+
+        $movieId = $session->get("movieId");
+        $doAdd = $session->get("doAdd");
+        $session->set("doAdd", null);
+        $session->set("doEdit", null);
+
+        if ($doAdd) {
+            $sql = "INSERT INTO movie (title, year, image) VALUES (?, ?, ?);";
+            $res = $this->db->executeFetchAll($sql, ["A title", 2017, "img/noimage.png"]);
+            $movieId = $this->db->lastInsertId();
+            $session->set("movieId", $movieId);
+        }
+
+        $sql = "SELECT * FROM movie WHERE id = ?;";
+        $res = $this->db->executeFetch($sql, [$movieId]);
+
+        $page->add("movie1/header");
+        $page->add("movie1/movieEdit", [
+            "movie" => $res,
+            "movieId" => $movieId,
+        ]);
+        // $this->app->page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the movieEdit method POST action that posts the data of a movie
+     * that has been edited or added in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function movieEditActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $movieId = $session->get("movieId");
+        $movieTitle = $request->getPost("movieTitle");
+        $movieYear = $request->getPost("movieYear");
+        $movieImage = $request->getPost("movieImage");
+        $doSave = $request->getPost("doSave");
+
+        if ($doSave && is_numeric($movieId)) {
+            $sql = "UPDATE movie SET title = ?, year = ?, image = ? WHERE id = ?;";
+            $this->db->execute($sql, [$movieTitle, $movieYear, $movieImage, $movieId]);
+            $session->set("doEdit", null);
+        }
+
+        return $response->redirect("movie1/movieEdit");
+    }
+
+    /**
+     * This is the showAllSort method action that shows all the movies and
+     * sorts it in different ways, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function showAllSortActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Show and sort all movies";
+
+        // Only these values are valid
+        $columns = ["id", "title", "year", "image"];
+        $orders = ["asc", "desc"];
+
+        $orderBy = $session->get("orderby", "id");
+        $order = $session->get("order", "asc");
+
+        // Incoming matches valid value sets
+        if (!(in_array($orderBy, $columns) && in_array($order, $orders))) {
+            alert("Not valid input for sorting.");
+        }
+
+        $sql = "SELECT * FROM movie ORDER BY $orderBy $order;";
+        $res = $this->db->executeFetchAll($sql);
+
+        $page->add("movie1/header");
+        $page->add("movie1/showAllSort", [
+            "res" => $res,
+        ]);
+        // $this->app->page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the showAllSort method POST action that posts the sort
+     * order of the movies in the movie database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function showAllSortActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $orderStrs = explode(" ", $request->getPost("order"));
+        $session->set("orderby", $orderStrs[0]);
+        $session->set("order", $orderStrs[1]);
+
+        return $response->redirect("movie1/showAllSort");
+    }
+
+
+    /**
+     * This is the method returns the number of the last inserted
+     * item or row in the database.
+     *
+     * @return int
+     */
+    public function getLastInsertedId() : int
+    {
+        $sql = "SELECT COUNT(*) AS count FROM movie;";
+        $res = $this->db->executeFetch($sql);
+        $id = $res->count;
+
+        return $id;
+    }
 }
