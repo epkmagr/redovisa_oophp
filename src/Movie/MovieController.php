@@ -25,9 +25,11 @@ class MovieController implements AppInjectableInterface
 
 
     /**
-     * @var string $db a sample member variable that gets initialised
+    * @var string $db a sample member variable that gets initialised
+    * @var DatabaseHelper $helper a support class to help with the database
      */
     private $db;
+    private $helper;
 
 
 
@@ -44,6 +46,7 @@ class MovieController implements AppInjectableInterface
         // connect to the database
         $this->app->db->connect();
         $this->db = $this->app->db;
+        $this->helper = new DatabaseHelper($this->db, "movie");
     }
 
     /**
@@ -98,7 +101,7 @@ class MovieController implements AppInjectableInterface
         $user = $request->getPost("user");
         $password = $request->getPost("password");
 
-        if ($this->valid($user, $password)) {
+        if ($this->helper->valid($user, $password)) {
             $session->set("loginMessage", null);
             $session->set("movieUser", $user);
             return $response->redirect("movie1/showAll");
@@ -173,8 +176,7 @@ class MovieController implements AppInjectableInterface
 
         $title = "Movie database | oophp";
 
-        $sql = "SELECT * FROM movie;";
-        $res = $this->db->executeFetchAll($sql);
+        $res = $this->helper->getAllRows();
 
         $movieUser = $session->get("movieUser");
 
@@ -199,7 +201,7 @@ class MovieController implements AppInjectableInterface
      *
      * @return string
      */
-    public function resetActionGet() : object
+    public function resetActionGet(string $configFile = "database") : object
     {
         // Framework services
         $page = $this->app->page;
@@ -211,7 +213,7 @@ class MovieController implements AppInjectableInterface
         $session->set("reset", null);
         $movieUser = $session->get("movieUser");
 
-        $dbConfig = $this->app->configuration->load("database");
+        $dbConfig = $this->app->configuration->load($configFile);
 
         $page->add("movie1/header", [
             "movieUser" => $movieUser,
@@ -276,8 +278,7 @@ class MovieController implements AppInjectableInterface
             "movieUser" => $movieUser,
         ]);
         if ($doSearch) {
-            $sql = "SELECT * FROM movie WHERE title LIKE ?;";
-            $res = $this->db->executeFetchAll($sql, [$searchTitle]);
+            $res = $this->helper->searchForTitle($searchTitle);
 
             $page->add("movie1/showAll", [
                 "res" => $res,
@@ -350,16 +351,7 @@ class MovieController implements AppInjectableInterface
             "movieUser" => $movieUser,
         ]);
         if ($doSearch) {
-            if ($year1 && $year2) {
-                $sql = "SELECT * FROM movie WHERE year >= ? AND year <= ?;";
-                $res = $this->db->executeFetchAll($sql, [$year1, $year2]);
-            } elseif ($year1) {
-                $sql = "SELECT * FROM movie WHERE year >= ?;";
-                $res = $this->db->executeFetchAll($sql, [$year1]);
-            } elseif ($year2) {
-                $sql = "SELECT * FROM movie WHERE year <= ?;";
-                $res = $this->db->executeFetchAll($sql, [$year2]);
-            }
+            $res = $this->helper->searchForYear($year1, $year2);
 
             $page->add("movie1/showAll", [
                 "res" => $res,
@@ -420,8 +412,7 @@ class MovieController implements AppInjectableInterface
 
         $title = "Movie database | oophp";
 
-        $sql = "SELECT * FROM movie;";
-        $res = $this->db->executeFetchAll($sql);
+        $res = $this->helper->getAllRows();
 
         $movieUser = $session->get("movieUser");
 
@@ -429,7 +420,7 @@ class MovieController implements AppInjectableInterface
             "movieUser" => $movieUser,
         ]);
         $page->add("movie1/select", [
-            "sql"=> $sql,
+            "sql"=> "SELECT * FROM movie;",
             "res" => $res,
         ]);
 
@@ -460,8 +451,7 @@ class MovieController implements AppInjectableInterface
         $doAdd = $session->get("doAdd");
         $doEdit = $session->get("doEdit");
 
-        $sql = "SELECT id, title FROM movie;";
-        $res = $this->db->executeFetchAll($sql);
+        $res = $this->helper->getRowsWithIdAndTitle();
 
         $movieUser = $session->get("movieUser");
 
@@ -506,9 +496,8 @@ class MovieController implements AppInjectableInterface
         $session->set("doAdd", $doAdd);
         $session->set("doEdit", $doEdit);
 
-        if ($doDelete && is_numeric($movieId)) {
-            $sql = "DELETE FROM movie WHERE id = ?;";
-            $this->db->execute($sql, [$movieId]);
+        if ($doDelete) {
+            $this->helper->deleteRow($movieId);
         }
 
         return $response->redirect("movie1/movieSelect");
@@ -537,14 +526,11 @@ class MovieController implements AppInjectableInterface
         $session->set("doEdit", null);
 
         if ($doAdd) {
-            $sql = "INSERT INTO movie (title, year, image) VALUES (?, ?, ?);";
-            $res = $this->db->executeFetchAll($sql, ["A title", 2017, "img/noimage.png"]);
-            $movieId = $this->db->lastInsertId();
+            $movieId = $this->helper->insertRowAndReturnLastId();
             $session->set("movieId", $movieId);
         }
 
-        $sql = "SELECT * FROM movie WHERE id = ?;";
-        $res = $this->db->executeFetch($sql, [$movieId]);
+        $res = $this->helper->getRow($movieId);
 
         $movieUser = $session->get("movieUser");
 
@@ -585,8 +571,7 @@ class MovieController implements AppInjectableInterface
         $doSave = $request->getPost("doSave");
 
         if ($doSave && is_numeric($movieId)) {
-            $sql = "UPDATE movie SET title = ?, year = ?, image = ? WHERE id = ?;";
-            $this->db->execute($sql, [$movieTitle, $movieYear, $movieImage, $movieId]);
+            $this->helper->updateRow($movieTitle, $movieYear, $movieImage, $movieId);
             $session->set("doEdit", null);
         }
 
@@ -610,23 +595,10 @@ class MovieController implements AppInjectableInterface
 
         $title = "Show and sort all movies";
 
-        // Only these values are valid
-        $columns = ["id", "title", "year", "image"];
-        $orders = ["asc", "desc"];
-
         $orderBy = $session->get("orderby", "id");
         $order = $session->get("order", "asc");
 
-        // Incoming matches valid value sets
-        if (!in_array($orderBy, $columns)) {
-            $orderBy = "id";
-        };
-        if (!in_array($order, $orders)) {
-            $order = "asc";
-        };
-
-        $sql = "SELECT * FROM movie ORDER BY $orderBy $order;";
-        $res = $this->db->executeFetchAll($sql);
+        $res = $this->helper->showSorted($orderBy, $order);
 
         $movieUser = $session->get("movieUser");
 
@@ -685,39 +657,17 @@ class MovieController implements AppInjectableInterface
 
         // Get number of hits per page
         $hits = $session->get("hits", 4);
-        if (!(is_numeric($hits) && $hits > 0 && $hits <= 8)) {
-            $hits = 4;
-        }
 
         // Get max number of pages
-        $sql = "SELECT COUNT(id) AS max FROM movie;";
-        $max = $this->db->executeFetchAll($sql);
-        $max = ceil($max[0]->max / $hits);
+        $max = $this->helper->getMaxForPagination($hits);
 
         // Get current page
         $currentPage = $session->get("currentPage", 1);
-        if (!(is_numeric($hits) && $currentPage > 0 && $currentPage <= $max)) {
-            $currentPage = 1;
-        }
-        $offset = $hits * ($currentPage - 1);
-
-        // Only these values are valid
-        $columns = ["id", "title", "year", "image"];
-        $orders = ["asc", "desc"];
 
         $orderBy = $session->get("orderby", "id");
         $order = $session->get("order", "asc");
 
-        // Incoming matches valid value sets
-        if (!in_array($orderBy, $columns)) {
-            $orderBy = "id";
-        }
-        if (!in_array($order, $orders)) {
-            $order = "asc";
-        }
-
-        $sql = "SELECT * FROM movie ORDER BY $orderBy $order LIMIT $hits OFFSET $offset;";
-        $res = $this->db->executeFetchAll($sql);
+        $res = $this->helper->showSortedAndPaginated($hits, $max, $currentPage, $orderBy, $order);
 
         $movieUser = $session->get("movieUser");
 
@@ -780,25 +730,5 @@ class MovieController implements AppInjectableInterface
         $id = $res->count;
 
         return $id;
-    }
-
-    /**
-     * This is the method returns true if it is a valid user, false otherwise
-     *
-     * @return boolean
-     */
-    public function valid($user, $password) : bool
-    {
-        if ($user == null || $password == null) {
-            return false;
-        } else {
-            $sql = "SELECT `user` FROM `users` WHERE `user`='$user' AND `password`=MD5('$password');";
-            $res = $this->db->executeFetch($sql);
-            if ($res->user == $user) {
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
 }

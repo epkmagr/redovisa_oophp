@@ -5335,6 +5335,9 @@ input[type=password] {
 #password {
   margin-right: 2em;
 }
+fieldset {
+  color: #92cae4;
+}
 /* Dice100 */
 .dice100 input[type=submit] {
   width: 15em;

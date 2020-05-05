@@ -118,3 +118,9 @@ v5.0.4 (2020-05-05)
 
 * First draft of the report of kmom05.
 * Added simple login/logout with a user database.
+
+v5.0.5 (2020-05-05)
+------------------------
+
+* Added help class to reduce the complexity of the controller of the
+  movie database.
