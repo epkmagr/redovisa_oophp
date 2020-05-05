@@ -9,6 +9,12 @@
 <navbar class="movieNavbar">
     <h4></h4>
     <a href="select">SELECT *</a> |
+    <?php if ($movieUser == null) : ?>
+        <a href="login">Login</a> |
+    <?php endif ?>
+    <?php if ($movieUser) : ?>
+        <a href="logout">Logout <i>(User: <?= $movieUser ?>)</i></a> |
+    <?php endif ?>
     <br>
     <a href="showAll">Show all movies</a> |
     <a href="reset">Reset database</a> |

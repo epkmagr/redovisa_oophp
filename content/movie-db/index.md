@@ -1,6 +1,6 @@
 Filmdatabas
 ===========================
 
-Välkommen till filmdatabasen *Movie*.
+Välkommen till filmdatabasen *My Movie Database*.
 
-[Starta filmdatabasen!](movie1/showAll)
+[Logga in för att se filmdatabasen!](movie1/login)

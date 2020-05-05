@@ -47,6 +47,117 @@ class MovieController implements AppInjectableInterface
     }
 
     /**
+     * This is the login method GET action that shows the login form, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function loginActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Login to the database";
+
+        $loginMessage = $session->get("loginMessage");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
+
+        $page->add("user/login", [
+            "loginMessage" => $loginMessage,
+        ]);
+
+        // $page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the login method POST action that handles login, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function loginActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $user = $request->getPost("user");
+        $password = $request->getPost("password");
+
+        if ($this->valid($user, $password)) {
+            $session->set("loginMessage", null);
+            $session->set("movieUser", $user);
+            return $response->redirect("movie1/showAll");
+        } else {
+            $session->set("loginMessage", "Faulty login, try again!");
+            return $response->redirect("movie1/login");
+        }
+    }
+
+    /**
+     * This is the logout method GET action that shows the login form, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function logoutActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Logout from the database";
+
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
+        $page->add("user/logout");
+
+        // $page->add("movie1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the logout method POST action that handles login, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function logoutActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $session = $this->app->session;
+
+        $session->set("movieUser", null);
+
+        return $response->redirect("movie-db");
+    }
+
+    /**
      * This is the showAll method action that shows all the movies, it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
@@ -58,16 +169,22 @@ class MovieController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "Movie database | oophp";
 
         $sql = "SELECT * FROM movie;";
         $res = $this->db->executeFetchAll($sql);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         $page->add("movie1/showAll", [
             "res" => $res,
         ]);
+        // $this->app->page->add("movie1/debug");
 
         return $page->render([
             "title" => $title,
@@ -92,10 +209,13 @@ class MovieController implements AppInjectableInterface
 
         $reset = $session->get("reset");
         $session->set("reset", null);
+        $movieUser = $session->get("movieUser");
 
         $dbConfig = $this->app->configuration->load("database");
 
-        $page->add("movie1/header");
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         $page->add("movie1/reset", [
             "reset" => $reset,
             "dbConfig" => $dbConfig['config'],
@@ -129,36 +249,6 @@ class MovieController implements AppInjectableInterface
     }
 
     /**
-     * This is the select method action that shows all the movies in raw
-     * print, it handles:
-     * ANY METHOD mountpoint
-     * ANY METHOD mountpoint/
-     * ANY METHOD mountpoint/index
-     *
-     * @return string
-     */
-    public function selectAction() : object
-    {
-        // Framework services
-        $page = $this->app->page;
-
-        $title = "Movie database | oophp";
-
-        $sql = "SELECT * FROM movie;";
-        $res = $this->db->executeFetchAll($sql);
-
-        $page->add("movie1/header");
-        $page->add("movie1/select", [
-            "sql"=> $sql,
-            "res" => $res,
-        ]);
-
-        return $page->render([
-            "title" => $title,
-        ]);
-    }
-
-    /**
      * This is the searchTitle method GET action that shows the titles
      * that was searched for in the movie database, it handles:
      * ANY METHOD mountpoint
@@ -180,7 +270,11 @@ class MovieController implements AppInjectableInterface
         $session->set("doSearch", null);
         $session->set("searchTitle", null);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         if ($doSearch) {
             $sql = "SELECT * FROM movie WHERE title LIKE ?;";
             $res = $this->db->executeFetchAll($sql, [$searchTitle]);
@@ -250,7 +344,11 @@ class MovieController implements AppInjectableInterface
         $session->set("year1", null);
         $session->set("year2", null);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         if ($doSearch) {
             if ($year1 && $year2) {
                 $sql = "SELECT * FROM movie WHERE year >= ? AND year <= ?;";
@@ -306,6 +404,41 @@ class MovieController implements AppInjectableInterface
     }
 
     /**
+     * This is the select method action that shows all the movies in raw
+     * print, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return string
+     */
+    public function selectAction() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Movie database | oophp";
+
+        $sql = "SELECT * FROM movie;";
+        $res = $this->db->executeFetchAll($sql);
+
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
+        $page->add("movie1/select", [
+            "sql"=> $sql,
+            "res" => $res,
+        ]);
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
      * This is the movieSelect method GET action that shows the titles
      * that can be selected in the movie database, it handles:
      * ANY METHOD mountpoint
@@ -330,7 +463,11 @@ class MovieController implements AppInjectableInterface
         $sql = "SELECT id, title FROM movie;";
         $res = $this->db->executeFetchAll($sql);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         if ($doAdd || ($doEdit && is_numeric($movieId))) {
             return $response->redirect("movie1/movieEdit");
         } else {
@@ -409,7 +546,11 @@ class MovieController implements AppInjectableInterface
         $sql = "SELECT * FROM movie WHERE id = ?;";
         $res = $this->db->executeFetch($sql, [$movieId]);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         $page->add("movie1/movieEdit", [
             "movie" => $res,
             "movieId" => $movieId,
@@ -487,7 +628,11 @@ class MovieController implements AppInjectableInterface
         $sql = "SELECT * FROM movie ORDER BY $orderBy $order;";
         $res = $this->db->executeFetchAll($sql);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         $page->add("movie1/showAllSort", [
             "res" => $res,
         ]);
@@ -574,7 +719,11 @@ class MovieController implements AppInjectableInterface
         $sql = "SELECT * FROM movie ORDER BY $orderBy $order LIMIT $hits OFFSET $offset;";
         $res = $this->db->executeFetchAll($sql);
 
-        $page->add("movie1/header");
+        $movieUser = $session->get("movieUser");
+
+        $page->add("movie1/header", [
+            "movieUser" => $movieUser,
+        ]);
         $page->add("movie1/showAllPaginate", [
             "res" => $res,
             "max" => $max,
@@ -631,5 +780,25 @@ class MovieController implements AppInjectableInterface
         $id = $res->count;
 
         return $id;
+    }
+
+    /**
+     * This is the method returns true if it is a valid user, false otherwise
+     *
+     * @return boolean
+     */
+    public function valid($user, $password) : bool
+    {
+        if ($user == null || $password == null) {
+            return false;
+        } else {
+            $sql = "SELECT `user` FROM `users` WHERE `user`='$user' AND `password`=MD5('$password');";
+            $res = $this->db->executeFetch($sql);
+            if ($res->user == $user) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

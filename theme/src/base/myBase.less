@@ -92,21 +92,28 @@ p {
     margin-left: 4em;
 }
 
-input[type=text] {
+input[type=text],
+input[type=password] {
     border-radius: 12px;
 }
 
 input[type=text],
-input[type=submit] {
+input[type=submit],
+input[type=password] {
     width: 10em;
     height: 3em;
     background-color: @infoBackgroundColor;
     border: 2px solid @infoBorderColor;
 }
 
-input[type=text] {
+input[type=text],
+input[type=password] {
     font-size: 1.2em;
     text-align: center;
+}
+
+#password {
+    margin-right: 2em;
 }
 
 /* Dice100 */

@@ -112,3 +112,9 @@ v5.0.3 (2020-05-04)
 * Added pagination.
 * Styled images with cimage.
 * Style movie database navbar.
+
+v5.0.4 (2020-05-05)
+------------------------
+
+* First draft of the report of kmom05.
+* Added simple login/logout with a user database.
