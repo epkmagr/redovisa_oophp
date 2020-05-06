@@ -151,6 +151,11 @@ class MovieControllerSelectTest extends TestCase
         $movieId = $this->controller->getLastInsertedId();
         $exp = $id - 1;
         $this->assertEquals($exp, $movieId);
+
+        // Reset the database after 3 CRUD testcases
+        $dbConfig = $this->app->configuration->load("database");
+        $helper = new DatabaseHelper($this->app->db, "movie");
+        $helper->getCommand($dbConfig['config']);
     }
 
     /**

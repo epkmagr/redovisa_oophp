@@ -39,10 +39,12 @@ class DatabaseHelper
         } else {
             $sql = "SELECT `user` FROM `users` WHERE `user`='$user' AND `password`=MD5('$password');";
             $res = $this->db->executeFetch($sql);
-            if ($res->user == $user) {
-                return true;
-            } else {
+            if ($res == null) {
                 return false;
+            } else {
+                if ($res->user == $user) {
+                    return true;
+                }
             }
         }
     }
@@ -86,10 +88,10 @@ class DatabaseHelper
         if ($year1 && $year2) {
             $sql = "SELECT * FROM $this->table WHERE year >= ? AND year <= ?;";
             $res = $this->db->executeFetchAll($sql, [$year1, $year2]);
-        } elseif ($year1) {
+        } elseif ($year1 && $year2 === 0) {
             $sql = "SELECT * FROM $this->table WHERE year >= ?;";
             $res = $this->db->executeFetchAll($sql, [$year1]);
-        } elseif ($year2) {
+        } elseif ($year2 && $year1 === 0) {
             $sql = "SELECT * FROM $this->table WHERE year <= ?;";
             $res = $this->db->executeFetchAll($sql, [$year2]);
         }
@@ -248,5 +250,55 @@ class DatabaseHelper
         $res = $this->db->executeFetchAll($sql);
 
         return $res;
+    }
+
+    /**
+     * Returns the result from a selected row with id
+     *
+     * @var object $dbConfig the database configuration information.
+     * @var string $test if testing another path to the setup.sql file is needed.
+     * @return array with command on 0, status on 1 and output on 2.
+     */
+    public function getCommand($dbConfig, $test = null) : array
+    {
+        $resetInfo = [];
+
+        // Test if a testcase is calling this method to get rid of error message
+        // when running make phpunit.
+        $trace = debug_backtrace();
+        if (isset($trace[1])) {
+            if (strpos($trace[1]['file'], "test") !== false ||
+                strpos($trace[1]['function'], "test") !== false) {
+                $test = "test";
+            }
+        }
+        // Restore the database to its original settings
+        if ($test === null) {
+            $file = "../sql/movie/setup.sql";
+        } else {
+            $file = ANAX_INSTALL_PATH . "/sql/movie/setup.sql";
+        }
+
+        $mysql  = "mysql";
+        $output = null;
+
+        // Extract hostname and databasename from dsn
+        $dsnDetail = [];
+        preg_match("/mysql:host=(.+);dbname=([^;.]+)/", $dbConfig["dsn"], $dsnDetail);
+        $host = $dsnDetail[1];
+        $database = $dsnDetail[2];
+        $login = $dbConfig["username"];
+        $password = $dbConfig["password"];
+
+        $command = "$mysql -h{$host} -u{$login} -p{$password} $database < $file 2>&1";
+        $output = [];
+        $status = null;
+        exec($command, $output, $status);
+
+        $resetInfo[0] = $command;
+        $resetInfo[1] = $status;
+        $resetInfo[2] = $output;
+
+        return $resetInfo;
     }
 }

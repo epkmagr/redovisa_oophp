@@ -31,6 +31,8 @@ class MovieControllerSearchTest extends TestCase
         // Init service container $di to contain $app as a service
         $di = new DIMagic();
         $di->loadServices(ANAX_INSTALL_PATH . "/config/di");
+
+        // $di->db->setOptions($this->mysqlOptions);
         $app = $di;
         $this->app = $app;
         $di->set("app", $app);
@@ -63,7 +65,7 @@ class MovieControllerSearchTest extends TestCase
     }
 
     /**
-     * Call the controller reset action POST.
+     * Call the controller searchTitle action POST.
      */
     public function testSearchTitleActionPost()
     {
@@ -93,20 +95,6 @@ class MovieControllerSearchTest extends TestCase
 
         $res = $this->controller->searchYearActionGet();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-    * Call the controller searchYear action GET with do search
-    * but no years.
-    */
-    public function testSearchYearActionGetSearch()
-    {
-        $this->app->session->set("doSearch", "Search");
-
-        $res = $this->controller->searchYearActionGet();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $doSearch = $this->app->session->get("doSearch");
-        $this->assertNull($doSearch);
     }
 
     /**

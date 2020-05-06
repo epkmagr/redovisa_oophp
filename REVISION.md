@@ -124,3 +124,11 @@ v5.0.5 (2020-05-05)
 
 * Added help class to reduce the complexity of the controller of the
   movie database.
+
+ v5.0.6 (2020-05-06)
+ ------------------------
+
+ * Solved the issue with SERVER_NAME in the MovieController tests.
+ * Added more testcases to test the MovieController class.
+ * Moved reset of the database to DatabaseHelper class, and made it possible
+   to use from the controller CRUD tests as well.

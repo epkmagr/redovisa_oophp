@@ -39,3 +39,8 @@ $di->get("response")->send(
         $di->get("request")->getMethod()
     )
 );
+
+/**
+ * Sample configuration file for test configuration.
+ */
+require ANAX_INSTALL_PATH . "/config/database.php";

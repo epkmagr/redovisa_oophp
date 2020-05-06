@@ -55,7 +55,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function loginActionGet() : object
     {
@@ -89,7 +89,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function loginActionPost() : object
     {
@@ -117,7 +117,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function logoutActionGet() : object
     {
@@ -147,7 +147,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function logoutActionPost() : object
     {
@@ -166,7 +166,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function showAllAction() : object
     {
@@ -199,9 +199,9 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
-    public function resetActionGet(string $configFile = "database") : object
+    public function resetActionGet() : object
     {
         // Framework services
         $page = $this->app->page;
@@ -213,15 +213,26 @@ class MovieController implements AppInjectableInterface
         $session->set("reset", null);
         $movieUser = $session->get("movieUser");
 
-        $dbConfig = $this->app->configuration->load($configFile);
-
         $page->add("movie1/header", [
             "movieUser" => $movieUser,
         ]);
-        $page->add("movie1/reset", [
-            "reset" => $reset,
-            "dbConfig" => $dbConfig['config'],
-        ]);
+
+        if ($reset) {
+            $dbConfig = $this->app->configuration->load("database");
+            $resetInfo = $this->helper->getCommand($dbConfig['config']);
+            $page->add("movie1/reset", [
+                "reset" => $reset,
+                "command" => $resetInfo[0],
+                "status" => $resetInfo[1],
+                "output" => $resetInfo[2],
+            ]);
+        } else {
+            $page->add("movie1/reset", [
+                "reset" => null,
+            ]);
+        }
+
+        // $this->app->page->add("movie1/debug");
 
         return $page->render([
             "title" => $title,
@@ -235,7 +246,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function resetActionPost() : object
     {
@@ -257,7 +268,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function searchTitleActionGet() : object
     {
@@ -302,7 +313,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function searchTitleActionPost() : object
     {
@@ -327,7 +338,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function searchYearActionGet() : object
     {
@@ -339,8 +350,8 @@ class MovieController implements AppInjectableInterface
         $title = "SELECT * WHERE year";
 
         $doSearch = $session->get("doSearch");
-        $year1 = $session->get("year1");
-        $year2 = $session->get("year2");
+        $year1 = $session->get("year1", 0);
+        $year2 = $session->get("year2", 0);
         $session->set("doSearch", null);
         $session->set("year1", null);
         $session->set("year2", null);
@@ -376,7 +387,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function searchYearActionPost() : object
     {
@@ -402,7 +413,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function selectAction() : object
     {
@@ -436,7 +447,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function movieSelectActionGet() : object
     {
@@ -479,7 +490,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function movieSelectActionPost() : object
     {
@@ -510,7 +521,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function movieEditActionGet() : object
     {
@@ -555,7 +566,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function movieEditActionPost() : object
     {
@@ -622,7 +633,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function showAllSortActionPost() : object
     {
@@ -693,7 +704,7 @@ class MovieController implements AppInjectableInterface
      * ANY METHOD mountpoint/
      * ANY METHOD mountpoint/index
      *
-     * @return string
+     * @return object
      */
     public function showAllPaginateActionPost() : object
     {

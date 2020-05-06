@@ -35,7 +35,6 @@ class MovieControllerTest extends TestCase
         $this->app = $app;
         $di->set("app", $app);
 
-        // Create and initiate the controller
         $this->controller = new MovieController();
         $this->controller->setApp($app);
         $this->controller->initialize();
@@ -55,6 +54,17 @@ class MovieControllerTest extends TestCase
      */
     public function testResetActionGet()
     {
+        $res = $this->controller->resetActionGet();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller reset action GET with reset.
+     */
+    public function testResetActionGetReset()
+    {
+        $this->app->session->set("reset", "Reset database");
+
         $res = $this->controller->resetActionGet();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
@@ -85,6 +95,72 @@ class MovieControllerTest extends TestCase
         $res = $this->controller->selectAction();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
+
+    /**
+     * Call the controller login action GET.
+     */
+    public function testLoginActionGet()
+    {
+        $res = $this->controller->loginActionGet();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller login action POST Ok.
+     */
+    public function testLoginActionPostOk()
+    {
+        $this->app->request->setGlobals([
+            "post" => [
+                "user" => "doe",
+                "password" => "doe",
+            ]
+        ]);
+        $res = $this->controller->loginActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "movie1/showAll"));
+    }
+
+    /**
+     * Call the controller login action POST Not Ok.
+     */
+    public function testLoginActionPostNotOk()
+    {
+        $this->app->request->setGlobals([
+            "post" => [
+                "user" => "doe",
+                "password" => "HEJ",
+            ]
+        ]);
+        $res = $this->controller->loginActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "movie1/login"));
+        $msg = $this->app->session->get("loginMessage");
+        $exp = "Faulty login, try again!";
+        $this->assertEquals($exp, $msg);
+    }
+
+    /**
+     * Call the controller logout action GET.
+     */
+    public function testLogoutActionGet()
+    {
+        $this->app->session->set("movieUser", "doe");
+
+        $res = $this->controller->logoutActionGet();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller logout action POST Ok.
+     */
+    public function testLogoutActionPostOk()
+    {
+        $res = $this->controller->logoutActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "movie-db"));
+    }
+
 
     /**
      * Help method to check if the object constains the location, if so
