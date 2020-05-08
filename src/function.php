@@ -77,3 +77,75 @@ function viewImage($name)
     <img class="thumb" src="../../htdocs/cimage/img.php?src={$filename}&w=100&h=100&sharpen&crop-to-fit">
 EOD;
 }
+
+/**
+ * Get the value from POST as an array or return default value.
+ *
+ * @param mixed $request     to look for, or value array
+ * @param mixed $key     to look for, or value array
+ * @param mixed $default value to set if key does not exists
+ *
+ * @return mixed value from POST or the default value
+ */
+function getPostParams($request, $key, $default = null)
+{
+    if (is_array($key)) {
+        foreach ($key as $val) {
+            $post[$val] = $request->getPost($val);
+        }
+        return $post;
+    }
+}
+
+/**
+ * Create a slug of a string, to be used as url.
+ *
+ * @param string $str the string to format as slug.
+ *
+ * @return str the formatted slug.
+ */
+function slugify($str)
+{
+    $str = mb_strtolower(trim($str));
+    $str = str_replace(['å','ä'], 'a', $str);
+    $str = str_replace('ö', 'o', $str);
+    $str = preg_replace('/[^a-z0-9-]/', '-', $str);
+    $str = trim(preg_replace('/-+/', '-', $str), '-');
+    return $str;
+}
+
+/**
+ * Function to create links for sorting.
+ *
+ * @param string $id the id of the row to delete.
+ *
+ * @return string with button to order by column.
+ */
+function deleteButton(int $id)
+{
+    return <<<EOD
+<span class="adminButton">
+<button name="doDelete" type="submit" value="delete {$id}">
+    <i class="fa fa-trash-alt" aria-hidden="true"></i>
+</button>
+</span>
+EOD;
+}
+
+/**
+ * Function to create links for sorting.
+ *
+ * @param string $id the id of the row to edit.
+ *
+ * @return string with button to order by column.
+ */
+function editButton(int $id)
+{
+    return <<<EOD
+<span class="adminButton">
+<button name="doEdit" type="submit" value="edit {$id}">
+    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+</button>
+</span>
+EOD;
+}

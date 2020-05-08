@@ -137,3 +137,8 @@ v6.0.0 (2020-05-08)
 ------------------------
 
 * Added MyTextFilter with controller and tests.
+
+v6.0.1 (2020-05-08)
+------------------------
+
+* Added My content database showAll and CRUD with tests.
