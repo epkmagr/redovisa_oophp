@@ -132,3 +132,8 @@ v5.0.5 (2020-05-05)
  * Added more testcases to test the MovieController class.
  * Moved reset of the database to DatabaseHelper class, and made it possible
    to use from the controller CRUD tests as well.
+
+v6.0.0 (2020-05-08)
+------------------------
+
+* Added MyTextFilter with controller and tests.
