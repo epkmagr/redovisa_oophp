@@ -1,0 +1,8 @@
+
+One line.\nAnother line.
+
+This\r\nis\n\ra\nstring\r
+
+hej\nhej
+
+foo isn't\n bar

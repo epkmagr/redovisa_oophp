@@ -41,7 +41,7 @@ class GuessController implements AppInjectableInterface
     public function initialize() : void
     {
         // Use to initialise member variables.
-        $this->db = "active";
+        // $this->db = "active";
 
         // Use $this->app to access the framework services.
     }
