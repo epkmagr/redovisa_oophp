@@ -149,3 +149,25 @@ function editButton(int $id)
 </span>
 EOD;
 }
+
+/**
+ * Function that divides timestamp into date and time with
+ * newline.
+ *
+ * @param string $timestamp the timestamp to divide.
+ *
+ * @return string with button to order by column.
+ */
+function divideTimestamp(string $timestamp = null)
+{
+    if ($timestamp != null) {
+        $splitTimeStamp = explode(" ",$timestamp);
+        $date = $splitTimeStamp[0];
+        $time = $splitTimeStamp[1];
+        return <<<EOD
+{$date}<br>{$time}
+EOD;
+} else {
+    return "";
+}
+}

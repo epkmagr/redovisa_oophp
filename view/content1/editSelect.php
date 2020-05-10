@@ -30,21 +30,23 @@
     </p>
 
     <p>
-        <label>Type:<br>
-        <input type="text" name="contentType" value="<?= esc($content->type) ?>"/>
-    </p>
+        <label for="contentFilter">Filter</label>
+        <select name="contentFilter" multiple="multiple"  multiple size = 5 required>
+            <?php $filterArray = explode(",", $content->filter) ?>
+            <?php foreach ($filterArray as $row) : ?>
+                <option value="<?= $row ?>"><?= $row ?></option>
+            <?php endforeach; ?>
+        </select>
+     </p>
 
-    <p>
-        <label for="contentFilter">Filter:  </label>
-        <?php $filterArray = explode(",", $content->filter) ?>
-        <?php foreach ($validFilters as $row => $value) : ?>
-            <?php if (in_array($row, $filterArray)) : ?>
-                <input type="checkbox" id="contentFilter" name="contentFilter[]" value='<?= $row ?>' checked>
-            <?php else : ?>
-                <input type="checkbox" id="contentFilter" name="contentFilter[]" value='<?= $row ?>'>
-            <?php endif ?>
-           <label for="contentFilter"><?= $row ?></label>
-        <?php endforeach; ?>
+     <p>
+         <label>Type:<br>
+         <input type="text" name="contentType" value="<?= esc($content->type) ?>"/>
+     </p>
+
+     <p>
+         <label>Filter:<br>
+         <input type="text" name="contentFilter" value="<?= esc($content->filter) ?>"/>
      </p>
 
      <p>

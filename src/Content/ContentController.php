@@ -4,6 +4,7 @@ namespace Epkmagr\Content;
 
 use Anax\Commons\AppInjectableInterface;
 use Anax\Commons\AppInjectableTrait;
+use Epkmagr\MyTextFilter\MyTextFilter;
 
 /**
  * A sample controller to show how a controller class can be implemented.
@@ -21,9 +22,11 @@ class ContentController implements AppInjectableInterface
     /**
     * @var string $db a sample member variable that gets initialised
     * @var DatabaseHelper $helper a support class to help with the database
+    * @var MyTextFilter $filters a class for filtering text
      */
     private $db;
     private $helper;
+    private $filters;
 
     /**
      * The initialize method is optional and will always be called before the
@@ -39,6 +42,7 @@ class ContentController implements AppInjectableInterface
         $this->app->db->connect();
         $this->db = $this->app->db;
         $this->helper = new DatabaseHelper($this->db, "content");
+        $this->filters = new MyTextFilter();
     }
 
     /**
@@ -168,7 +172,7 @@ class ContentController implements AppInjectableInterface
 
         $page->add("content1/header");
         $page->add("content1/create");
-        $this->app->page->add("content1/debug");
+        // $this->app->page->add("content1/debug");
 
         return $page->render([
             "title" => $title,
@@ -225,7 +229,7 @@ class ContentController implements AppInjectableInterface
         $page->add("content1/admin", [
             "res" => $res,
         ]);
-        // $this->app->page->add("content1/debug");
+        $this->app->page->add("content1/debug");
 
         return $page->render([
             "title" => $title,
@@ -279,15 +283,18 @@ class ContentController implements AppInjectableInterface
 
         $title = "Edit content";
 
-        // $id = $request->getGet("id");
+        $slugErrorMsg = $session->get("slugErrorMsg");
+        $session->set("slugErrorMsg", null);
 
         $content = $this->helper->getRow($id);
 
         $page->add("content1/header");
         $page->add("content1/edit", [
+            "slugErrorMsg" => $slugErrorMsg,
             "content" => $content,
+            "validFilters" => $this->filters->getFilters(),
         ]);
-        // $this->app->page->add("content1/debug");
+        $this->app->page->add("content1/debug");
 
         return $page->render([
             "title" => $title,
@@ -309,6 +316,7 @@ class ContentController implements AppInjectableInterface
         $page = $this->app->page;
         $request = $this->app->request;
         $response = $this->app->response;
+        $session = $this->app->session;
 
         $doSave = $request->getPost("doSave");
         $doDelete = $request->getPost("doDelete");
@@ -337,7 +345,13 @@ class ContentController implements AppInjectableInterface
             if (!$params["contentPath"]) {
                 $params["contentPath"] = null;
             }
-            $this->helper->updateRow($params, $contentId);
+
+            $slugErrorMsg = $this->helper->updateRow($params, $contentId);
+            if ($slugErrorMsg != "") {
+                $session->set("slugErrorMsg", $slugErrorMsg);
+                return $response->redirect("content1/edit/$contentId");
+            }
+
             return $response->redirect("content1/admin");
         } else {
             return $response->redirect("content1/admin");

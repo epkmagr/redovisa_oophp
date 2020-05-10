@@ -142,3 +142,11 @@ v6.0.1 (2020-05-08)
 ------------------------
 
 * Added My content database showAll and CRUD with tests.
+
+v6.0.2(2020-05-10)
+------------------------
+
+* Added error handling if two slugs are identical.
+* Added the possibility to choose textfilter via checkboxes.
+* Changed so that the filters are shown with checkboxes too.
+* Styled the edit page to look better.

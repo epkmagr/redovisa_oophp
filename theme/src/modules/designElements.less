@@ -62,3 +62,50 @@ img.thumb {
 .contentNavbar a:hover {
     text-decoration: underline;
 }
+
+.contentEdit input[type=text],
+.contentEdit input[type=submit],
+.contentEdit textarea {
+    width: 20em;
+    height: 2em;
+    background-color: @infoBackgroundColor;
+    border: 2px solid @infoBorderColor;
+    border-radius: 0px;
+    text-align: left;
+}
+
+.contentEdit input[type=datetime],
+contentEdit select {
+    background-color: @infoBackgroundColor;
+    border: 2px solid @infoBorderColor;
+}
+
+.contentEdit textarea {
+    width: 40em;
+    height: 8em;
+    background-color: @infoBackgroundColor;
+    border: 2px solid @infoBorderColor;
+    border-radius: 0px;
+    text-align: left;
+}
+
+.adminButton i {
+    color: @infoBorderColor;
+    background-color: #101e26;
+}
+
+.adminButton button,
+.adminButton button {
+    background-color: #101e26;
+    border: 2px;
+}
+
+.contentShow table {
+  border-collapse: collapse;
+}
+
+.contentShow table,
+.contentShow th,
+.contentShow td {
+  border-bottom: 1px dotted @infoBorderColor;
+}

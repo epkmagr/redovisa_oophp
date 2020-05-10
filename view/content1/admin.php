@@ -4,7 +4,7 @@ if (!$res) {
 }
 ?>
 
-<form method="post">
+<form class="contentShow" method="post">
     <table>
         <tr class="first">
             <th>Id</th>
@@ -22,10 +22,10 @@ if (!$res) {
             <td><?= $row->id ?></td>
             <td><?= $row->title ?></td>
             <td><?= $row->type ?></td>
-            <td><?= $row->published ?></td>
-            <td><?= $row->created ?></td>
-            <td><?= $row->updated ?></td>
-            <td><?= $row->deleted ?></td>
+            <td><?= divideTimestamp($row->published) ?></td>
+            <td><?= divideTimestamp($row->created) ?></td>
+            <td><?= divideTimestamp($row->updated) ?></td>
+            <td><?= divideTimestamp($row->deleted) ?></td>
             <td>
                 <?= editButton($row->id) ?>
                 <?= deleteButton($row->id) ?>

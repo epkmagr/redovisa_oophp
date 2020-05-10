@@ -6525,3 +6525,43 @@ img.thumb {
 .contentNavbar a:hover {
   text-decoration: underline;
 }
+.contentEdit input[type=text],
+.contentEdit input[type=submit],
+.contentEdit textarea {
+  width: 20em;
+  height: 2em;
+  background-color: #d5edf8;
+  border: 2px solid #92cae4;
+  border-radius: 0px;
+  text-align: left;
+}
+.contentEdit input[type=datetime],
+contentEdit select {
+  background-color: #d5edf8;
+  border: 2px solid #92cae4;
+}
+.contentEdit textarea {
+  width: 40em;
+  height: 8em;
+  background-color: #d5edf8;
+  border: 2px solid #92cae4;
+  border-radius: 0px;
+  text-align: left;
+}
+.adminButton i {
+  color: #92cae4;
+  background-color: #101e26;
+}
+.adminButton button,
+.adminButton button {
+  background-color: #101e26;
+  border: 2px;
+}
+.contentShow table {
+  border-collapse: collapse;
+}
+.contentShow table,
+.contentShow th,
+.contentShow td {
+  border-bottom: 1px dotted #92cae4;
+}

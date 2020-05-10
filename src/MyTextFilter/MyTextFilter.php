@@ -26,6 +26,17 @@ class MyTextFilter
     ];
 
     /**
+     * Get all filters.
+     *
+     * @return array with the filters.
+     */
+    public function getFilters()
+    {
+        return $this->filters;
+    }
+
+
+    /**
      * Call each filter on the text and return the processed text.
      *
      * @param string $text   The text to filter.
@@ -44,8 +55,6 @@ class MyTextFilter
         }
         return $str;
     }
-
-
 
     /**
      * Helper, BBCode formatting converting to HTML.
@@ -77,8 +86,6 @@ class MyTextFilter
         return preg_replace($search, $replace, $text);
     }
 
-
-
     /**
      * Make clickable links from URLs in text.
      *
@@ -97,8 +104,6 @@ class MyTextFilter
         );
     }
 
-
-
     /**
      * Format text according to Markdown syntax.
      *
@@ -112,8 +117,6 @@ class MyTextFilter
     {
         return MarkdownExtra::defaultTransform($text);
     }
-
-
 
     /**
      * For convenience access to nl2br formatting of text.

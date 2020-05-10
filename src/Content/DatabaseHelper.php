@@ -174,12 +174,29 @@ class DatabaseHelper
      *
      * @var array $params an array of parameters to update.
      * @var int $id the id for the row in the database.
-     * @return void
+     * @return string with error message, empty otherwise
      */
     public function updateRow(array $params, int $id)
     {
-        $sql = "UPDATE $this->table SET title=?, path=?, slug=?, data=?, type=?, filter=?, published=? WHERE id = ?;";
-        $this->db->execute($sql, array_values($params));
+        $msg = "";
+
+        if ($params["contentFilter"]) {
+            $params["contentFilter"] = implode(",", $params["contentFilter"]);
+        }
+        if ($params['contentSlug'] != null) {
+            $sql = "SELECT id, slug FROM $this->table WHERE slug = ?;";
+            $res = $this->db->executeFetch($sql, [$params['contentSlug']]);
+            if ($res == null || $res->id === $id) {
+                $sql = "UPDATE $this->table SET title=?, path=?, slug=?, data=?, type=?, filter=?, published=? WHERE id = ?;";
+                $this->db->execute($sql, array_values($params));
+            }  else {
+                $msg = "The slug <i>" . $params['contentSlug'] . "</i> is taken, choose another!";
+            }
+        } else {
+            $sql = "UPDATE $this->table SET title=?, path=?, slug=?, data=?, type=?, filter=?, published=? WHERE id = ?;";
+            $this->db->execute($sql, array_values($params));
+        }
+        return $msg;
     }
 
     /**

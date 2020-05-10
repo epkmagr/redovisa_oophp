@@ -39,11 +39,11 @@
         <?php $filterArray = explode(",", $content->filter) ?>
         <?php foreach ($validFilters as $row => $value) : ?>
             <?php if (in_array($row, $filterArray)) : ?>
-                <input type="checkbox" id="contentFilter" name="contentFilter[]" value='<?= $row ?>' checked>
+                <input type="checkbox" id="contentFilter" name="contentFilter[<?= $row ?>]" value='<?= $row ?>' checked>
             <?php else : ?>
-                <input type="checkbox" id="contentFilter" name="contentFilter[]" value='<?= $row ?>'>
+                <input type="checkbox" id="contentFilter" name="contentFilter[]">
             <?php endif ?>
-           <label for="contentFilter"><?= $row ?></label>
+           <label for="<?= $row ?>"><?= $row ?></label>
         <?php endforeach; ?>
      </p>
 
