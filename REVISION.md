@@ -150,3 +150,10 @@ v6.0.2(2020-05-10)
 * Added the possibility to choose textfilter via checkboxes.
 * Changed so that the filters are shown with checkboxes too.
 * Styled the edit page to look better.
+
+v6.0.3(2020-05-10)
+------------------------
+
+* Added routes for pages.
+* Added routes for posts.
+* Added textfilter for pages and posts.

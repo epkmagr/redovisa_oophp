@@ -22,11 +22,11 @@ class ContentController implements AppInjectableInterface
     /**
     * @var string $db a sample member variable that gets initialised
     * @var DatabaseHelper $helper a support class to help with the database
-    * @var MyTextFilter $filters a class for filtering text
+    * @var MyTextFilter $textFilter a class for filtering text
      */
     private $db;
     private $helper;
-    private $filters;
+    private $textFilter;
 
     /**
      * The initialize method is optional and will always be called before the
@@ -42,7 +42,7 @@ class ContentController implements AppInjectableInterface
         $this->app->db->connect();
         $this->db = $this->app->db;
         $this->helper = new DatabaseHelper($this->db, "content");
-        $this->filters = new MyTextFilter();
+        $this->textFilter = new MyTextFilter();
     }
 
     /**
@@ -200,7 +200,6 @@ class ContentController implements AppInjectableInterface
 
         if ($doCreate === "create") {
             $id = $this->helper->insertRowAndReturnLastId($contentTitle);
-            // return $response->redirect("content1/edit?id={$id}");
             return $response->redirect("content1/edit/{$id}");
         } else {
             return $response->redirect("content1/create");
@@ -229,7 +228,7 @@ class ContentController implements AppInjectableInterface
         $page->add("content1/admin", [
             "res" => $res,
         ]);
-        $this->app->page->add("content1/debug");
+        // $this->app->page->add("content1/debug");
 
         return $page->render([
             "title" => $title,
@@ -288,13 +287,13 @@ class ContentController implements AppInjectableInterface
 
         $content = $this->helper->getRow($id);
 
-        $page->add("content1/header");
+        $page->add("content1/headerUpOneLevel");
         $page->add("content1/edit", [
             "slugErrorMsg" => $slugErrorMsg,
             "content" => $content,
-            "validFilters" => $this->filters->getFilters(),
+            "validFilters" => $this->textFilter->getFilters(),
         ]);
-        $this->app->page->add("content1/debug");
+        // $this->app->page->add("content1/debug");
 
         return $page->render([
             "title" => $title,
@@ -352,7 +351,7 @@ class ContentController implements AppInjectableInterface
                 return $response->redirect("content1/edit/$contentId");
             }
 
-            return $response->redirect("content1/admin");
+            return $response->redirect("content1/edit/$contentId");
         } else {
             return $response->redirect("content1/admin");
         }
@@ -410,5 +409,139 @@ class ContentController implements AppInjectableInterface
             $this->helper->markRowDeleted($id);
         }
         return $response->redirect("content1/admin");
+    }
+
+    /**
+     * This is the showPages method action that shows all the
+     * pages in the content database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function showPagesAction() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "View pages | oophp";
+
+        $res = $this->helper->getAllPages();
+
+        $page->add("content1/header");
+        $page->add("content1/showPages", [
+            "res" => $res,
+        ]);
+        // $this->app->page->add("content1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the showPage method action that shows the pages with
+     * a specific path in the content database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function showPageAction(string $path) : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $content = $this->helper->getOnePage($path);
+
+        $page->add("content1/headerUpOneLevel");
+
+        if (!$content) {
+            header("HTTP/1.0 404 Not Found");
+            $title = "404";
+            $page->add("content1/404.php");
+        } else {
+            $title = $content->title;
+            $page->add("content1/showPage", [
+                "content" => $content,
+                "parsedData" => parseText($this->textFilter, $content->data, $content->filter),
+            ]);
+        }
+        // $this->app->page->add("content1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the showBlog method action that shows all the
+     * blog posts in the content database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function showBlogAction() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "View blog | oophp";
+
+        $res = $this->helper->getAllPosts();
+
+        $page->add("content1/header");
+        $page->add("content1/showBlog", [
+            "res" => $res,
+        ]);
+        // $this->app->page->add("content1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the showBlogPost method action that shows the blog post
+     * with a specific slug in the content database, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function showBlogPostAction(string $slug) : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $content = $this->helper->getOnePost($slug);
+
+        $page->add("content1/headerUpOneLevel");
+
+        if (!$content) {
+            header("HTTP/1.0 404 Not Found");
+            $title = "404";
+            $page->add("content1/404.php");
+        } else {
+            $title = $content->title;
+            $page->add("content1/showBlogPost", [
+                "content" => $content,
+                "parsedData" => parseText($this->textFilter, $content->data, $content->filter),
+            ]);
+        }
+        // $this->app->page->add("content1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
     }
 }

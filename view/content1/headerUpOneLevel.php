@@ -9,12 +9,12 @@
 
 <navbar class="contentNavbar">
     <h4></h4>
-    <a href="showAll">Show all content</a> |
-    <a href="reset">Reset database</a> |
-    <a href="admin">Admin</a> |
-    <a href="create">Create</a> |
-    <a href="showPages">View pages</a> |
-    <a href="showBlog">View blog</a> |
+    <a href="../showAll">Show all content</a> |
+    <a href="../reset">Reset database</a> |
+    <a href="../admin">Admin</a> |
+    <a href="../create">Create</a> |
+    <a href="../showPages">View pages</a> |
+    <a href="../showBlog">View blog</a> |
 <!--        <a href="searchTitle">Search title</a> |
     <a href="searchYear">Search year</a> |
     <a href="movieSelect">Select</a> |

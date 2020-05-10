@@ -1,5 +1,7 @@
 <?php
 
+use Epkmagr\MyTextFilter\MyTextFilter;
+
 /**
  * Sanitize value for output in view.
  *
@@ -12,7 +14,40 @@ function esc($value)
     return htmlentities($value);
 }
 
-
+/**
+ * Parse the text with the given filters for output in view.
+ *
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ *
+ * @param MyTextFilter $myTextFilter   The text filter objcet to use.
+ * @param string $text   The text to filter.
+ * @param array  $filter Array of filters to use. Valid values are
+ *                       "bbcode", "link", "markdown" and "nl2br".
+ *
+ * @return string beeing sanitized
+ */
+function parseText(MyTextFilter $myTextFilter, $text, string $filters = "")
+{
+    $str = "";
+    if ($filters != "") {
+        if (strpos($filters, ",") !== false) {
+            $filterArray = explode(",", $filters);
+        } else {
+            $filterArray[] = $filters;
+        }
+        $filterArray = explode(",", $filters);
+        if (strpos($filters, "markdown")) {
+            $str = $myTextFilter->parse($text, $filterArray);
+        } else {
+            $str = "<p>";
+            $str = $str . $myTextFilter->parse($text, $filterArray);
+            $str = $str . "</p>";
+        }
+    } else {
+        $str = htmlentities($text);
+    }
+    return $str;
+}
 
 /**
  * Function to create links for sorting.

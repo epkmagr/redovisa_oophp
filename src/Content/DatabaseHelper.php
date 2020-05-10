@@ -343,4 +343,102 @@ class DatabaseHelper
 
         return $resetInfo;
     }
+
+    /**
+     * Returns all the pages in the database
+     *
+     * @return array a result set of pages
+     */
+    public function getAllPages() : array
+    {
+        $sql = <<<EOD
+SELECT
+*,
+CASE
+WHEN (deleted <= NOW()) THEN "isDeleted"
+WHEN (published <= NOW()) THEN "isPublished"
+ELSE "notPublished"
+END AS status
+FROM $this->table
+WHERE type=?
+;
+EOD;
+        $res = $this->db->executeFetchAll($sql, ["page"]);
+
+        return $res;
+    }
+
+    /**
+     * Returns a page in the database with a specific path
+     *
+     * @param string $path the path of the page to get
+     * @return object a result set of page with a specific path
+     */
+    public function getOnePage(string $path) : object
+    {
+        $sql = <<<EOD
+SELECT
+    *,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%dT%TZ') AS modified_iso8601,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%d') AS modified
+FROM $this->table
+WHERE
+    path = ?
+    AND type = ?
+    AND (deleted IS NULL OR deleted > NOW())
+    AND published <= NOW()
+;
+EOD;
+        $res = $this->db->executeFetch($sql, [$path, "page"]);
+
+        return $res;
+    }
+
+    /**
+     * Returns all the blog posts in the database
+     *
+     * @return array a result set of blog posts
+     */
+    public function getAllPosts() : array
+    {
+        $sql = <<<EOD
+SELECT
+    *,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%dT%TZ') AS published_iso8601,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%d') AS published
+FROM $this->table
+WHERE type=?
+ORDER BY published DESC
+;
+EOD;
+        $res = $this->db->executeFetchAll($sql, ["post"]);
+
+        return $res;
+    }
+
+    /**
+     * Returns all the blog posts in the database
+     *
+     * @return object a result set of blog posts
+     */
+    public function getOnePost(string $slug) : object
+    {
+        $sql = <<<EOD
+SELECT
+    *,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%dT%TZ') AS published_iso8601,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%d') AS published
+FROM $this->table
+WHERE
+    slug = ?
+    AND type = ?
+    AND (deleted IS NULL OR deleted > NOW())
+    AND published <= NOW()
+ORDER BY published DESC
+;
+EOD;
+        $res = $this->db->executeFetch($sql, [$slug, "post"]);
+
+        return $res;
+    }
 }
