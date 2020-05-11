@@ -42,6 +42,7 @@ class ContentController implements AppInjectableInterface
         $this->app->db->connect();
         $this->db = $this->app->db;
         $this->helper = new DatabaseHelper($this->db, "content");
+
         $this->textFilter = new MyTextFilter();
     }
 
@@ -60,6 +61,115 @@ class ContentController implements AppInjectableInterface
     }
 
     /**
+     * This is the login method GET action that shows the login form, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function loginActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Login to the database";
+
+        $loginMessage = $session->get("loginMessage");
+        $contentUser = $session->get("contentUser");
+
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
+
+        $page->add("content1/login", [
+            "loginMessage" => $loginMessage,
+        ]);
+        // $this->app->page->add("content1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the login method POST action that handles login, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function loginActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $request = $this->app->request;
+        $session = $this->app->session;
+
+        $user = $request->getPost("user");
+        $password = $request->getPost("password");
+
+        if ($this->helper->valid($user, $password)) {
+            $session->set("contentUser", $user);
+            $session->set("loginMessage", null);
+            return $response->redirect("content1/showAll");
+        } else {
+            $session->set("loginMessage", "Faulty login, try again!");
+            return $response->redirect("content1/login");
+        }
+    }
+
+    /**
+     * This is the logout method GET action that shows the login form, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function logoutActionGet() : object
+    {
+        // Framework services
+        $page = $this->app->page;
+        $session = $this->app->session;
+
+        $title = "Logout from the database";
+
+        $contentUser = $session->get("contentUser");
+
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
+        $page->add("content1/logout");
+        // $this->app->page->add("content1/debug");
+
+        return $page->render([
+            "title" => $title,
+        ]);
+    }
+
+    /**
+     * This is the logout method POST action that handles login, it handles:
+     * ANY METHOD mountpoint
+     * ANY METHOD mountpoint/
+     * ANY METHOD mountpoint/index
+     *
+     * @return object
+     */
+    public function logoutActionPost() : object
+    {
+        // Framework services
+        $response = $this->app->response;
+        $session = $this->app->session;
+
+        $session->set("contentUser", null);
+
+        return $response->redirect("content1/showAll");
+    }
+
+    /**
      * This is the showAll method action that shows all the content, it handles:
      * ANY METHOD mountpoint
      * ANY METHOD mountpoint/
@@ -71,12 +181,16 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "Content database | oophp";
 
         $res = $this->helper->getAllRows();
 
-        $page->add("content1/header");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/showAll", [
             "res" => $res,
         ]);
@@ -106,7 +220,10 @@ class ContentController implements AppInjectableInterface
         $reset = $session->get("reset");
         $session->set("reset", null);
 
-        $page->add("content1/header");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
 
         if ($reset) {
             $dbConfig = $this->app->configuration->load("database");
@@ -165,10 +282,14 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "Create content";
 
-        $page->add("content1/header");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/create");
         // $this->app->page->add("content1/debug");
 
@@ -215,14 +336,34 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "Admin content | oophp";
 
-        $res = $this->helper->getAllRows();
+        // Get number of hits per page
+        $hits = $session->get("hitsC", 4);
 
-        $page->add("content1/header");
+        // Get max number of pages
+        $max = $this->helper->getMaxForPagination($hits);
+
+        // Get current page
+        $currentPage = $session->get("currentPageC", 1);
+
+        $orderBy = $session->get("orderbyC", "id");
+        $order = $session->get("orderC", "asc");
+
+        $res = $this->helper->showSortedAndPaginated($hits, $max, $currentPage, $orderBy, $order);
+
+        // $res = $this->helper->getAllRows();
+
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/admin", [
             "res" => $res,
+            "max" => $max,
+            "currentPage" => $currentPage,
         ]);
         // $this->app->page->add("content1/debug");
 
@@ -244,6 +385,19 @@ class ContentController implements AppInjectableInterface
         // Framework services
         $request = $this->app->request;
         $response = $this->app->response;
+        $session = $this->app->session;
+
+        $orderStrs = explode(" ", $request->getPost("order"));
+        $session->set("orderbyC", $orderStrs[0]);
+        $session->set("orderC", $orderStrs[1]);
+        $currentPage = $request->getPost("currentPage");
+        if ($currentPage != null) {
+            $session->set("currentPageC", $currentPage);
+        }
+        $hits = $request->getPost("hits");
+        if ($hits != null) {
+            $session->set("hitsC", $hits);
+        }
 
         $doDeleteStr = explode(" ", $request->getPost("doDelete"));
         $doEditStr = explode(" ", $request->getPost("doEdit"));
@@ -279,7 +433,10 @@ class ContentController implements AppInjectableInterface
 
         $content = $this->helper->getRow($id);
 
-        $page->add("content1/headerUpOneLevel");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/headerUpOneLevel", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/edit", [
             "slugErrorMsg" => $slugErrorMsg,
             "content" => $content,
@@ -360,12 +517,16 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "Delete content | oophp";
 
         $titleObj = $this->helper->getRowTitle($id);
 
-        $page->add("content1/header");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/delete", [
             "contentId" => $id,
             "contentTitle" => $titleObj->title,
@@ -413,12 +574,16 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "View pages | oophp";
 
         $res = $this->helper->getAllPages();
 
-        $page->add("content1/header");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/showPages", [
             "res" => $res,
         ]);
@@ -442,15 +607,19 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $content = $this->helper->getOnePage($path);
 
-        $page->add("content1/headerUpOneLevel");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/headerUpOneLevel", [
+            "contentUser" => $contentUser,
+        ]);
 
-        if (!$content) {
+        if ($content == (object)[]) {
             header("HTTP/1.0 404 Not Found");
             $title = "404";
-            $page->add("content1/404.php");
+            $page->add("content1/404");
         } else {
             $title = $content->title;
             $page->add("content1/showPage", [
@@ -478,12 +647,16 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
+        $session = $this->app->session;
 
         $title = "View blog | oophp";
 
         $res = $this->helper->getAllPosts();
 
-        $page->add("content1/header");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/header", [
+            "contentUser" => $contentUser,
+        ]);
         $page->add("content1/showBlog", [
             "res" => $res,
         ]);
@@ -507,15 +680,19 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-    
+        $session = $this->app->session;
+
         $content = $this->helper->getOnePost($slug);
 
-        $page->add("content1/headerUpOneLevel");
+        $contentUser = $session->get("contentUser");
+        $page->add("content1/headerUpOneLevel", [
+            "contentUser" => $contentUser,
+        ]);
 
-        if (!$content) {
+        if ($content == (object)[]) {
             header("HTTP/1.0 404 Not Found");
             $title = "404";
-            $page->add("content1/404.php");
+            $page->add("content1/404");
         } else {
             $title = $content->title;
             $page->add("content1/showBlogPost", [

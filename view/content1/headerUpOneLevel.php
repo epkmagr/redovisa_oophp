@@ -10,16 +10,19 @@
 <navbar class="contentNavbar">
     <h4></h4>
     <a href="../showAll">Show all content</a> |
-    <a href="../reset">Reset database</a> |
-    <a href="../admin">Admin</a> |
-    <a href="../create">Create</a> |
+    <?php if ($contentUser) : ?>
+        <a href="../reset">Reset database</a> |
+        <a href="../admin">Admin</a> |
+        <a href="../create">Create</a> |
+    <?php endif ?>
     <a href="../showPages">View pages</a> |
     <a href="../showBlog">View blog</a> |
-<!--        <a href="searchTitle">Search title</a> |
-    <a href="searchYear">Search year</a> |
-    <a href="movieSelect">Select</a> |
-    <a href="showAllSort">Show all sortable</a> |
-    <a href="showAllPaginate">Show all paginate</a> -->
+    <?php if ($contentUser == null) : ?>
+        <a href="../login">Login</a> |
+    <?php endif ?>
+    <?php if ($contentUser) : ?>
+        <a href="../logout">Logout <i>(User: <?= $contentUser ?>)</i></a> |
+    <?php endif ?>
 </navbar>
 
 <h1>My Content Database</h1>

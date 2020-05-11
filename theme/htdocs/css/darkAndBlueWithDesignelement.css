@@ -6565,3 +6565,10 @@ contentEdit select {
 .contentShow td {
   border-bottom: 1px dotted #92cae4;
 }
+.orderby button {
+  background-color: #92cae4;
+  padding: 0px 1px 2px 1px;
+}
+.paginate button {
+  background-color: #92cae4;
+}

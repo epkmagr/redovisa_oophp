@@ -76,7 +76,7 @@ EOD;
 function hitsPerPage($hits)
 {
     return <<<EOD
-<span class="orderby">
+<span class="paginate">
 <button name="hits" type="submit" value="{$hits}">{$hits}</button>
 </span>
 EOD;
@@ -92,7 +92,7 @@ EOD;
 function getCurrentPage($currentPage)
 {
     return <<<EOD
-<span class="orderby">
+<span class="paginate">
 <button name="currentPage" type="submit" value="{$currentPage}">{$currentPage}</button>
 </span>
 EOD;
@@ -189,6 +189,24 @@ function divideTimestamp(string $timestamp = null)
         return <<<EOD
 {$date}<br>{$time}
 EOD;
+    } else {
+        return "";
+    }
+}
+
+/**
+ * Function that gets the date from a timestamp into date and time with
+ * newline.
+ *
+ * @param string $timestamp the timestamp to divide.
+ *
+ * @return string with button to order by column.
+ */
+function getDateFromTimestamp(string $timestamp = null)
+{
+    if ($timestamp != null) {
+        $splitTimeStamp = explode(" ", $timestamp);
+        return $splitTimeStamp[0];
     } else {
         return "";
     }

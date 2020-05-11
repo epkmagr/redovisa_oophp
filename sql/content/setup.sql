@@ -33,7 +33,7 @@ CREATE TABLE `content`
   `published` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated` DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
- 
+
   -- MySQL version 5.5 and lower
   -- `published` DATETIME DEFAULT NULL,
   -- `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -51,8 +51,28 @@ INSERT INTO `content` (`path`, `slug`, `type`, `title`, `data`, `filter`) VALUES
 
 SELECT `id`, `path`, `slug`, `type`, `title`, `created` FROM `content`;
 
+--
+-- Create table for users
+--
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users`
+(
+    `id` INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    `user` CHAR(10) NOT NULL,
+    `password` CHAR(32),
+    `active` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `admin` BOOLEAN NOT NULL
+) ENGINE INNODB CHARACTER SET utf8 COLLATE utf8_swedish_ci;
 
---
---
---
---   ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+DELETE FROM `users`;
+INSERT INTO `users` (`user`, `admin`) VALUES
+    ('admin', true),
+    ('doe', false)
+;
+
+UPDATE `users`
+SET active = CURRENT_TIMESTAMP,
+    `password` = MD5(`user`)
+;
+
+SELECT * FROM `users`;

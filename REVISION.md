@@ -166,3 +166,10 @@ v6.0.4(2020-05-11)
 * Created content database on the student server.
 * Tested the code on the student server.
 * Mandatory requirements for kmom06 met.
+
+v6.0.5(2020-05-11)
+------------------------
+
+* Added login/logout.
+* Added pagination and sorting on the admin view.
+* First draft of the report of kmom06.

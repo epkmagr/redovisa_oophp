@@ -28,6 +28,29 @@ class DatabaseHelper
     }
 
     /**
+     * This is the method returns true if it is a valid user, false otherwise.
+     * The users are stored in a table called users.
+     *
+     * @return boolean
+     */
+    public function valid($user, $password) : bool
+    {
+        if ($user == null || $password == null) {
+            return false;
+        } else {
+            $sql = "SELECT `user` FROM `users` WHERE `user`='$user' AND `password`=MD5('$password');";
+            $res = $this->db->executeFetch($sql);
+            if ($res == null) {
+                return false;
+            } else {
+                if ($res->user == $user) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    /**
      * Returns the result from a select *
      *
      * @return array a result set from select *
@@ -222,6 +245,9 @@ WHERE
 ;
 EOD;
         $res = $this->db->executeFetch($sql, [$path, "page"]);
+        if ($res == null) {
+            $res = (object)[];
+        }
 
         return $res;
     }
@@ -270,6 +296,64 @@ ORDER BY published DESC
 ;
 EOD;
         $res = $this->db->executeFetch($sql, [$slug, "post"]);
+        if ($res == null) {
+            $res = (object)[];
+        }
+
+        return $res;
+    }
+
+    /**
+     * Returns the result from a selected row with id
+     *
+     * @var int $hits the number of hits per page.
+     * @return float a max number of pages is returned.
+     */
+    public function getMaxForPagination(int $hits) : float
+    {
+        $sql = "SELECT COUNT(id) AS max FROM $this->table;";
+        $max = $this->db->executeFetchAll($sql);
+        $max = ceil($max[0]->max / $hits);
+
+        return $max;
+    }
+
+    /**
+     * Returns the result from the database sorted in the way specified
+     * by orderBy and order. The result is paginated by hits and currentPage.
+     *
+     * @var int $hits the number of hits per page.
+     * @var int $max the max number of pages.
+     * @var int $currentPage the current page.
+     * @var string $orderBy the column in the database to be sorted after.
+     * @var string $order the order asc or desc sort after.
+     * @return array a result set
+     */
+    public function showSortedAndPaginated(int $hits, int $max, int $currentPage, string $orderBy, string $order) : array
+    {
+        if (!(is_numeric($hits) && $hits > 0 && $hits <= 8)) {
+            $hits = 4;
+        }
+
+        if (!(is_numeric($hits) && $currentPage > 0 && $currentPage <= $max)) {
+            $currentPage = 1;
+        }
+        $offset = $hits * ($currentPage - 1);
+
+        // Only these values are valid
+        $columns = ["id", "title"];
+        $orders = ["asc", "desc"];
+
+        // Incoming matches valid value sets
+        if (!in_array($orderBy, $columns)) {
+            $orderBy = "id";
+        }
+        if (!in_array($order, $orders)) {
+            $order = "asc";
+        }
+
+        $sql = "SELECT * FROM $this->table ORDER BY $orderBy $order LIMIT $hits OFFSET $offset;";
+        $res = $this->db->executeFetchAll($sql);
 
         return $res;
     }

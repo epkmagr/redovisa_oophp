@@ -11,7 +11,7 @@ use Anax\Response\ResponseUtility;
  * Test the controller like it would be used from the router,
  * simulating the actual router paths and calling it directly.
  */
-class ContentControllerTest extends TestCase
+class ContentControllerLogInOutTest extends TestCase
 {
     /**
      * @var ContentController $controller   The ContentController to be tested.
@@ -41,68 +41,71 @@ class ContentControllerTest extends TestCase
     }
 
     /**
-     * Call the controller index action.
+     * Call the controller login action GET.
      */
-    public function testIndexAction()
+    public function testLoginActionGet()
     {
-        $res = $this->controller->indexAction();
-        $this->assertIsString($res);
-        $this->assertContains("INDEX", $res);
-    }
-
-    /**
-     * Call the controller showAll action.
-     */
-    public function testShowAllAction()
-    {
-        $res = $this->controller->showAllAction();
+        $res = $this->controller->loginActionGet();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller showPages action.
+     * Call the controller login action POST Ok.
      */
-    public function testShowPagesAction()
+    public function testLoginActionPostOk()
     {
-        $res = $this->controller->showPagesAction();
+        $this->app->request->setGlobals([
+            "post" => [
+                "user" => "doe",
+                "password" => "doe",
+            ]
+        ]);
+        $res = $this->controller->loginActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "content1/showAll"));
+        $contentUser = $this->app->session->get("contentUser");
+        $exp = "doe";
+        $this->assertEquals($exp, $contentUser);
+    }
+
+    /**
+     * Call the controller login action POST Not Ok.
+     */
+    public function testLoginActionPostNotOk()
+    {
+        $this->app->request->setGlobals([
+            "post" => [
+                "user" => "doe",
+                "password" => "HEJ",
+            ]
+        ]);
+        $res = $this->controller->loginActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "content1/login"));
+        $msg = $this->app->session->get("loginMessage");
+        $exp = "Faulty login, try again!";
+        $this->assertEquals($exp, $msg);
+    }
+
+    /**
+     * Call the controller logout action GET.
+     */
+    public function testLogoutActionGet()
+    {
+        $this->app->session->set("contentUser", "doe");
+
+        $res = $this->controller->logoutActionGet();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller showPage action.
+     * Call the controller logout action POST Ok.
      */
-    public function testShowPageAction()
+    public function testLogoutActionPostOk()
     {
-        $res = $this->controller->showPageAction("hem");
+        $res = $this->controller->logoutActionPost();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller showPage action no content, due to deleted or
-     * unknown path.
-     */
-    public function testShowPageActionNoContent()
-    {
-        $res = $this->controller->showPageAction("unknown");
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller showBlog action.
-     */
-    public function testShowBlogAction()
-    {
-        $res = $this->controller->showBlogAction();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller showBlogPost action.
-     */
-    public function testShowBlogPostAction()
-    {
-        $res = $this->controller->showBlogPostAction("nu-har-sommaren-kommit");
-        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "content1/showAll"));
     }
 
     /**
