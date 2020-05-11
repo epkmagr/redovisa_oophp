@@ -114,25 +114,6 @@ EOD;
 }
 
 /**
- * Get the value from POST as an array or return default value.
- *
- * @param mixed $request     to look for, or value array
- * @param mixed $key     to look for, or value array
- * @param mixed $default value to set if key does not exists
- *
- * @return mixed value from POST or the default value
- */
-function getPostParams($request, $key, $default = null)
-{
-    if (is_array($key)) {
-        foreach ($key as $val) {
-            $post[$val] = $request->getPost($val);
-        }
-        return $post;
-    }
-}
-
-/**
  * Create a slug of a string, to be used as url.
  *
  * @param string $str the string to format as slug.
@@ -158,10 +139,16 @@ function slugify($str)
  */
 function deleteButton(int $id)
 {
+    $server = $_SERVER["SERVER_NAME"] ?? null;
+    if ($server === "www.student.bth.se") {
+        $trash = "o";
+    } else {
+        $trash = "alt";
+    }
     return <<<EOD
 <span class="adminButton">
 <button name="doDelete" type="submit" value="delete {$id}">
-    <i class="fa fa-trash-alt" aria-hidden="true"></i>
+    <i class="fa fa-trash-{$trash}" aria-hidden="true"></i>
 </button>
 </span>
 EOD;
@@ -196,13 +183,13 @@ EOD;
 function divideTimestamp(string $timestamp = null)
 {
     if ($timestamp != null) {
-        $splitTimeStamp = explode(" ",$timestamp);
+        $splitTimeStamp = explode(" ", $timestamp);
         $date = $splitTimeStamp[0];
         $time = $splitTimeStamp[1];
         return <<<EOD
 {$date}<br>{$time}
 EOD;
-} else {
-    return "";
-}
+    } else {
+        return "";
+    }
 }

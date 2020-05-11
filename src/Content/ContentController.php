@@ -71,7 +71,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $title = "Content database | oophp";
 
@@ -166,7 +165,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $title = "Create content";
 
@@ -191,7 +189,6 @@ class ContentController implements AppInjectableInterface
     public function createActionPost() : object
     {
         // Framework services
-        $page = $this->app->page;
         $request = $this->app->request;
         $response = $this->app->response;
 
@@ -218,7 +215,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $title = "Admin content | oophp";
 
@@ -246,7 +242,6 @@ class ContentController implements AppInjectableInterface
     public function adminActionPost() : object
     {
         // Framework services
-        $page = $this->app->page;
         $request = $this->app->request;
         $response = $this->app->response;
 
@@ -254,10 +249,8 @@ class ContentController implements AppInjectableInterface
         $doEditStr = explode(" ", $request->getPost("doEdit"));
 
         if ($doDeleteStr[0] === "delete") {
-            // $id = $this->helper->markRowDeleted($doDeleteStr[1]);
             return $response->redirect("content1/delete/{$doDeleteStr[1]}");
         } elseif ($doEditStr[0] === "edit") {
-            // $id = $this->helper->updateRow($doEditStr[1]);
             return $response->redirect("content1/edit/{$doEditStr[1]}");
         } else {
             return $response->redirect("content1/admin");
@@ -277,7 +270,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $request = $this->app->request;
         $session = $this->app->session;
 
         $title = "Edit content";
@@ -312,14 +304,13 @@ class ContentController implements AppInjectableInterface
     public function editActionPost(int $id = 0) : object
     {
         // Framework services
-        $page = $this->app->page;
         $request = $this->app->request;
         $response = $this->app->response;
         $session = $this->app->session;
 
         $doSave = $request->getPost("doSave");
         $doDelete = $request->getPost("doDelete");
-        $contentId = $request->getPost("contentId");
+        $contentId = $request->getPost("contentId", $id);
 
         if ($doDelete === "delete") {
             return $response->redirect("content1/delete/{$contentId}");
@@ -369,7 +360,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $title = "Delete content | oophp";
 
@@ -398,7 +388,6 @@ class ContentController implements AppInjectableInterface
     public function deleteActionPost(int $id = 0) : object
     {
         // Framework services
-        $page = $this->app->page;
         $request = $this->app->request;
         $response = $this->app->response;
 
@@ -424,7 +413,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $title = "View pages | oophp";
 
@@ -454,7 +442,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $content = $this->helper->getOnePage($path);
 
@@ -491,7 +478,6 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
 
         $title = "View blog | oophp";
 
@@ -521,8 +507,7 @@ class ContentController implements AppInjectableInterface
     {
         // Framework services
         $page = $this->app->page;
-        $session = $this->app->session;
-
+    
         $content = $this->helper->getOnePost($slug);
 
         $page->add("content1/headerUpOneLevel");

@@ -108,7 +108,7 @@ Here comes another paragraph, now intended as blockquote.
     }
 
     /**
-     * Test strip_tags ok.
+     * Test stripTags ok.
      *
      * @return void
      */
@@ -142,8 +142,8 @@ Ordered list again
   This should be a blockquote.
 
 ";
-        $res = $filter->strip_tags($html);
-        $this->assertEquals($exp, $res, "strip_tags failed: '$res'");
+        $res = $filter->stripTags($html);
+        $this->assertEquals($exp, $res, "stripTags failed: '$res'");
     }
 
     /**
@@ -187,7 +187,7 @@ Ordered list again
 
         $html = "[b]Bold text[/b] [i]Italic text[/i] [url=http://dbwebb.se]a link to dbwebb[/url]";
         $exp  = "Bold text Italic text a link to dbwebb";
-        $res = $filter->parse($html, ["bbcode", "strip_tags"]);
+        $res = $filter->parse($html, ["bbcode", "stripTags"]);
         $this->assertEquals($exp, $res, "ecs failed: '$res'");
     }
 }

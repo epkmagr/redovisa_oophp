@@ -60,32 +60,39 @@ class ContentControllerTest extends TestCase
     }
 
     /**
-     * Call the controller reset action GET with reset.
+     * Call the controller showPages action.
      */
-    public function testResetActionGet()
+    public function testShowPagesAction()
     {
-        $this->app->session->set("reset", "Reset database");
-
-        $res = $this->controller->resetActionGet();
+        $res = $this->controller->showPagesAction();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller reset action POST.
+     * Call the controller showPage action.
      */
-    public function testResetActionPost()
+    public function testShowPageAction()
     {
-        $this->app->request->setGlobals([
-            "post" => [
-                "reset" => "Reset database",
-            ]
-        ]);
-        $res = $this->controller->resetActionPost();
+        $res = $this->controller->showPageAction("hem");
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/reset"));
-        $reset = $this->app->session->get("reset");
-        $exp = "Reset database";
-        $this->assertEquals($exp, $reset);
+    }
+
+    /**
+     * Call the controller showBlog action.
+     */
+    public function testShowBlogAction()
+    {
+        $res = $this->controller->showBlogAction();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller showBlogPost action.
+     */
+    public function testShowBlogPostAction()
+    {
+        $res = $this->controller->showBlogPostAction("nu-har-sommaren-kommit");
+        $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
@@ -107,125 +114,5 @@ class ContentControllerTest extends TestCase
             }
         }
         return $hasLocationHeader;
-    }
-
-    /**
-     * Call the controller create action GET.
-     */
-    public function testCreateActionGet()
-    {
-        $res = $this->controller->createActionGet();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller create action POST nothing set.
-     */
-    public function testCreateActionPost()
-    {
-        $res = $this->controller->createActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/create"));
-    }
-
-    /**
-     * Call the controller create action POST.
-     */
-    public function testCreateActionPostDoCreate()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "contentTitle" => "A title",
-                "doCreate" => " Create",
-            ]
-        ]);
-        $res = $this->controller->createActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/edit"));
-    }
-
-    /**
-     * Call the controller edit action GET.
-     */
-    public function testEditActionGet()
-    {
-        $res = $this->controller->editActionGet(1);
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller edit action POST nothing set.
-     */
-    public function testEditActionPost()
-    {
-        $res = $this->controller->editActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/admin"));
-    }
-
-    /**
-     * Call the controller edit action POST with doSave.
-     */
-    public function testEditActionPostDoSave()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "contentId" => 1,
-                "contentTitle" => "A title",
-                "doSave" => "save",
-            ]
-        ]);
-        $res = $this->controller->editActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/edit"));
-    }
-
-    /**
-     * Call the controller edit action POST with doDelete.
-     */
-    public function testEditActionPostDoDelete()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "contentId" => 1,
-                "doDelete" => "delete",
-            ]
-        ]);
-        $res = $this->controller->editActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/delete"));
-    }
-
-    /**
-     * Call the controller admin action GET.
-     */
-    public function testAdminActionGet()
-    {
-        $res = $this->controller->adminActionGet();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller delete action GET.
-     */
-    public function testDeleteActionGet()
-    {
-        $res = $this->controller->deleteActionGet(1);
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller delete action POST nothing set.
-     */
-    public function testDeleteActionPost()
-    {
-        $res = $this->controller->deleteActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/admin"));
-
-        // Reset the database after CRUD testcases
-        $dbConfig = $this->app->configuration->load("database");
-        $helper = new DatabaseHelper($this->app->db, "content");
-        $helper->getCommand($dbConfig['config']);
     }
 }

@@ -157,3 +157,12 @@ v6.0.3(2020-05-10)
 * Added routes for pages.
 * Added routes for posts.
 * Added textfilter for pages and posts.
+
+v6.0.4(2020-05-11)
+------------------------
+
+* Added test for content controller.
+* Validated the code.
+* Created content database on the student server.
+* Tested the code on the student server.
+* Mandatory requirements for kmom06 met.
