@@ -64,6 +64,28 @@ class DatabaseHelper
     }
 
     /**
+     * Returns the result from a select * with all the published but not
+     * deleted content for a user that is not logged in.
+     *
+     * @return array a result set from select *
+     */
+    public function getAllRowsWithoutLogin() : array
+    {
+        $sql = <<<EOD
+SELECT
+*
+FROM content
+WHERE
+    (deleted IS NULL OR deleted > NOW())
+    AND published <= NOW()
+;
+EOD;
+        $res = $this->db->executeFetchAll($sql);
+
+        return $res;
+    }
+
+    /**
      * Inserts a row into the table and returns its id
      *
      * @var string $title the title of the row in the database.
@@ -107,7 +129,7 @@ class DatabaseHelper
     }
 
     /**
-     * Updates a selected row with id with inf
+     * Updates a selected row with id with the given information
      *
      * @var array $params an array of parameters to update.
      * @var int $id the id for the row in the database.
@@ -116,19 +138,24 @@ class DatabaseHelper
     public function updateRow(array $params, int $id)
     {
         $msg = "";
+        $resSlug = null;
+        $resPath = null;
 
         if ($params["contentFilter"]) {
             $params["contentFilter"] = implode(",", $params["contentFilter"]);
         }
         if ($params['contentSlug'] != null) {
             $sql = "SELECT id, slug FROM $this->table WHERE slug = ?;";
-            $res = $this->db->executeFetch($sql, [$params['contentSlug']]);
-            if ($res == null || $res->id === $id) {
-                $sql = "UPDATE $this->table SET title=?, path=?, slug=?, data=?, type=?, filter=?, published=? WHERE id = ?;";
-                $this->db->execute($sql, array_values($params));
-            } else {
-                $msg = "The slug <i>" . $params['contentSlug'] . "</i> is taken, choose another!";
-            }
+            $resSlug = $this->db->executeFetch($sql, [$params['contentSlug']]);
+        }
+        if ($params['contentPath'] != null) {
+            $sql = "SELECT id, path FROM $this->table WHERE path = ?;";
+            $resPath = $this->db->executeFetch($sql, [$params['contentPath']]);
+        }
+        if ($resSlug != null && $resSlug->id != $id) {
+            $msg = "The slug <i>" . $params['contentSlug'] . "</i> is taken, choose another!";
+        } elseif ($resPath != null && $resPath->id != $id) {
+            $msg = "The path <i>" . $params['contentPath'] . "</i> is taken, choose another!";
         } else {
             $sql = "UPDATE $this->table SET title=?, path=?, slug=?, data=?, type=?, filter=?, published=? WHERE id = ?;";
             $this->db->execute($sql, array_values($params));
@@ -210,12 +237,38 @@ class DatabaseHelper
 SELECT
 *,
 CASE
-WHEN (deleted <= NOW()) THEN "isDeleted"
-WHEN (published <= NOW()) THEN "isPublished"
-ELSE "notPublished"
+    WHEN (deleted <= NOW()) THEN "isDeleted"
+    WHEN (published <= NOW()) THEN "isPublished"
+    ELSE "notPublished"
 END AS status
 FROM $this->table
 WHERE type=?
+;
+EOD;
+        $res = $this->db->executeFetchAll($sql, ["page"]);
+
+        return $res;
+    }
+
+    /**
+     * Returns all the pages in the database
+     *
+     * @return array a result set of pages
+     */
+    public function getAllPublishedPages() : array
+    {
+        $sql = <<<EOD
+SELECT
+*,
+CASE
+    WHEN (deleted <= NOW()) THEN "isDeleted"
+    WHEN (published <= NOW()) THEN "isPublished"
+    ELSE "notPublished"
+END AS status
+FROM $this->table
+WHERE type=?
+    AND published <= NOW()
+    AND (deleted IS NULL OR deleted > NOW())
 ;
 EOD;
         $res = $this->db->executeFetchAll($sql, ["page"]);
@@ -262,10 +315,47 @@ EOD;
         $sql = <<<EOD
 SELECT
     *,
+    CASE
+        WHEN (published <= NOW()) THEN "isPublished"
+        ELSE "notPublished"
+    END AS status,
+    DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%dT%TZ') AS published_iso8601,
+    CASE
+        WHEN (published <= NOW()) THEN
+            DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%d')
+        ELSE
+            DATE_FORMAT(published, '%Y-%m-%d')
+    END AS published
+FROM $this->table
+    WHERE type=?
+ORDER BY published DESC
+;
+EOD;
+        $res = $this->db->executeFetchAll($sql, ["post"]);
+
+        return $res;
+    }
+
+    /**
+     * Returns all the published blog posts in the database
+     *
+     * @return array a result set of blog posts
+     */
+    public function getAllPublishedPosts() : array
+    {
+        $sql = <<<EOD
+SELECT
+    *,
+    CASE
+        WHEN (published <= NOW()) THEN "isPublished"
+        ELSE "notPublished"
+    END AS status,
     DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%dT%TZ') AS published_iso8601,
     DATE_FORMAT(COALESCE(updated, published), '%Y-%m-%d') AS published
 FROM $this->table
 WHERE type=?
+    AND published <= NOW()
+    AND (deleted IS NULL OR deleted > NOW())
 ORDER BY published DESC
 ;
 EOD;

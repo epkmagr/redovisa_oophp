@@ -2,6 +2,10 @@
     <p class="warning"><?= $slugErrorMsg ?> </p> |
 <?php endif ?>
 
+<?php
+if (!isset($contentUser)) {
+    return;
+} ?>
 
 <form class="contentEdit" method="post">
     <fieldset>
@@ -16,7 +20,7 @@
 
     <p>
         <label>Path:<br>
-        <input type="text" name="contentPath" value="<?= esc($content->path) ?>"/>
+        <input type="text" name="contentPath" value="<?= esc($content->path) ?>" required/>
     </p>
 
     <p>
@@ -30,8 +34,23 @@
     </p>
 
     <p>
-        <label>Type:<br>
-        <input type="text" name="contentType" value="<?= esc($content->type) ?>"/>
+        <label>Type of content:<br>
+        <label class="radio">
+            Page:
+            <?php if ($content->type === "page") : ?>
+                <input type="radio" name="contentType" value="page" checked>
+            <?php else : ?>
+                <input type="radio" name="contentType" value="page" checked>
+            <?php endif ?>
+        </label>
+        <label class="radio">
+            Post:
+            <?php if ($content->type === "post") : ?>
+                <input type="radio" name="contentType" value="post" checked>
+            <?php else : ?>
+                <input type="radio" name="contentType" value="post">
+            <?php endif ?>
+        </label>
     </p>
 
     <p>
@@ -48,8 +67,8 @@
      </p>
 
      <p>
-         <label>Publish:<br>
-         <input type="datetime" name="contentPublish" value="<?= esc($content->published) ?>"/>
+        <label>Publish:<br>
+        <input type="datetime" name="contentPublish" value="<?= esc($content->published) ?>"/>
      </p>
 
     <p>

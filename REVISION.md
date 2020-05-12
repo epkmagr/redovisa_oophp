@@ -173,3 +173,16 @@ v6.0.5(2020-05-11)
 * Added login/logout.
 * Added pagination and sorting on the admin view.
 * First draft of the report of kmom06.
+
+v6.0.6(2020-05-12)
+------------------------
+
+* Finished the report of kmom06.
+* Updated/corrected slug and path handling.
+* Locked users that are not logged in from crashing pages they
+  should not be able to see.
+* Only users that are logged in can see deleted and not published
+  material.
+* Only users that are logged in are able to reset the database and also
+  create, delete and update content in the database.
+* Updated tests.

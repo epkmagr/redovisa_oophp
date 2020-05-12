@@ -11,7 +11,7 @@ use Anax\Response\ResponseUtility;
  * Test the controller like it would be used from the router,
  * simulating the actual router paths and calling it directly.
  */
-class ContentControllerLogInOutTest extends TestCase
+class ContentControllerShowPageAndBlogTest extends TestCase
 {
     /**
      * @var ContentController $controller   The ContentController to be tested.
@@ -41,71 +41,81 @@ class ContentControllerLogInOutTest extends TestCase
     }
 
     /**
-     * Call the controller login action GET.
+     * Call the controller index action.
      */
-    public function testLoginActionGet()
+    public function testIndexAction()
     {
-        $res = $this->controller->loginActionGet();
+        $res = $this->controller->indexAction();
+        $this->assertIsString($res);
+        $this->assertContains("INDEX", $res);
+    }
+
+    /**
+     * Call the controller showPages action.
+     */
+    public function testShowPagesAction()
+    {
+        $res = $this->controller->showPagesAction();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller login action POST Ok.
+     * Call the controller showPages action logged in.
      */
-    public function testLoginActionPostOk()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "user" => "doe",
-                "password" => "doe",
-            ]
-        ]);
-        $res = $this->controller->loginActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/showAll"));
-        $contentUser = $this->app->session->get("contentUser");
-        $exp = "doe";
-        $this->assertEquals($exp, $contentUser);
-    }
-
-    /**
-     * Call the controller login action POST Not Ok.
-     */
-    public function testLoginActionPostNotOk()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "user" => "doe",
-                "password" => "HEJ",
-            ]
-        ]);
-        $res = $this->controller->loginActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/login"));
-        $msg = $this->app->session->get("loginMessage");
-        $exp = "Faulty login, try again!";
-        $this->assertEquals($exp, $msg);
-    }
-
-    /**
-     * Call the controller logout action GET.
-     */
-    public function testLogoutActionGet()
+    public function testShowPagesActionLoggedIn()
     {
         $this->app->session->set("contentUser", "doe");
 
-        $res = $this->controller->logoutActionGet();
+        $res = $this->controller->showPagesAction();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller logout action POST Ok.
+     * Call the controller showPage action.
      */
-    public function testLogoutActionPostOk()
+    public function testShowPageAction()
     {
-        $res = $this->controller->logoutActionPost();
+        $res = $this->controller->showPageAction("hem");
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/showAll"));
+    }
+
+    /**
+     * Call the controller showPage action with
+     * unknown path.
+     */
+    public function testShowPageActionPathUnknown()
+    {
+        $res = $this->controller->showPageAction("unknown");
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller showBlog action.
+     */
+    public function testShowBlogAction()
+    {
+        $res = $this->controller->showBlogAction();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller showBlog action logged in.
+     */
+    public function testShowBlogActionLoggedIn()
+    {
+        $this->app->session->set("contentUser", "doe");
+
+        $res = $this->controller->showBlogAction();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller showBlogPost action.
+     */
+    public function testShowBlogPostAction()
+    {
+        $res = $this->controller->showBlogPostAction("nu-har-sommaren-kommit");
+        $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**

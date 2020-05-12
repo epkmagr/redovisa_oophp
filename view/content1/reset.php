@@ -1,6 +1,8 @@
 <?php
 // Restore the database to its original settings
-
+if (!isset($contentUser)) {
+    return;
+}
 if (isset($reset)) {
     $output = "<p>The command was: <code>$command</code>.<br>The command exit status was $status."
         . "<br>The output from the command was:</p><pre>"

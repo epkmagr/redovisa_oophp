@@ -1,4 +1,4 @@
-<form method="post">
+<form class="contentEdit" method="post">
     <fieldset>
     <legend>Delete</legend>
 

@@ -131,6 +131,22 @@ function slugify($str)
 }
 
 /**
+ * Create a path of a string, to be used as url.
+ *
+ * @param string $str the string to format as path.
+ *
+ * @return str the formatted path.
+ */
+function pathify($str)
+{
+    $str = mb_strtolower(trim($str));
+    $str = str_replace(['å','ä'], 'a', $str);
+    $str = str_replace('ö', 'o', $str);
+    $str = explode(' ', trim($str))[0];
+    return $str;
+}
+
+/**
  * Function to create links for sorting.
  *
  * @param string $id the id of the row to delete.
@@ -139,16 +155,10 @@ function slugify($str)
  */
 function deleteButton(int $id)
 {
-    $server = $_SERVER["SERVER_NAME"] ?? null;
-    if ($server === "www.student.bth.se") {
-        $trash = "o";
-    } else {
-        $trash = "alt";
-    }
     return <<<EOD
 <span class="adminButton">
 <button name="doDelete" type="submit" value="delete {$id}">
-    <i class="fa fa-trash-{$trash}" aria-hidden="true"></i>
+    <i class="fa fa-trash-o" aria-hidden="true"></i>
 </button>
 </span>
 EOD;

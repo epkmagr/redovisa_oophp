@@ -60,69 +60,13 @@ class ContentControllerTest extends TestCase
     }
 
     /**
-     * Call the controller showPages action.
+     * Call the controller showAll action logged in.
      */
-    public function testShowPagesAction()
+    public function testShowAllActionLoggedIn()
     {
-        $res = $this->controller->showPagesAction();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
+        $this->app->session->set("contentUser", "doe");
 
-    /**
-     * Call the controller showPage action.
-     */
-    public function testShowPageAction()
-    {
-        $res = $this->controller->showPageAction("hem");
+        $res = $this->controller->showAllAction();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller showPage action no content, due to deleted or
-     * unknown path.
-     */
-    public function testShowPageActionNoContent()
-    {
-        $res = $this->controller->showPageAction("unknown");
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller showBlog action.
-     */
-    public function testShowBlogAction()
-    {
-        $res = $this->controller->showBlogAction();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller showBlogPost action.
-     */
-    public function testShowBlogPostAction()
-    {
-        $res = $this->controller->showBlogPostAction("nu-har-sommaren-kommit");
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Help method to check if the object constains the location, if so
-     * it returns true otherwise false.
-     *
-     * @return boolean as if location is found.
-     */
-    public function checkLocation($res, string $location)
-    {
-        // Check where to the redirect is (do you really need to assert this?)
-        $headers = $res->getHeaders();
-        $hasLocationHeader = false;
-        foreach ($headers as $header) {
-            if (substr($header, 0, 10) === "Location: ") {
-                $hasLocationHeader = true;
-                // The last part (a) is the url whereto redirect
-                $this->assertContains($location, $header);
-            }
-        }
-        return $hasLocationHeader;
     }
 }

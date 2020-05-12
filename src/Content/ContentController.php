@@ -185,12 +185,17 @@ class ContentController implements AppInjectableInterface
 
         $title = "Content database | oophp";
 
-        $res = $this->helper->getAllRows();
-
         $contentUser = $session->get("contentUser");
         $page->add("content1/header", [
             "contentUser" => $contentUser,
         ]);
+
+        if ($contentUser) {
+            $res = $this->helper->getAllRows();
+        } else {
+            $res = $this->helper->getAllRowsWithoutLogin();
+        }
+
         $page->add("content1/showAll", [
             "res" => $res,
         ]);
@@ -233,10 +238,12 @@ class ContentController implements AppInjectableInterface
                 "command" => $resetInfo[0],
                 "status" => $resetInfo[1],
                 "output" => $resetInfo[2],
+                "contentUser" => $contentUser,
             ]);
         } else {
             $page->add("content1/reset", [
                 "reset" => null,
+                "contentUser" => $contentUser,
             ]);
         }
 
@@ -290,7 +297,10 @@ class ContentController implements AppInjectableInterface
         $page->add("content1/header", [
             "contentUser" => $contentUser,
         ]);
-        $page->add("content1/create");
+        if ($contentUser) {
+            $page->add("content1/create");
+        }
+
         // $this->app->page->add("content1/debug");
 
         return $page->render([
@@ -364,6 +374,7 @@ class ContentController implements AppInjectableInterface
             "res" => $res,
             "max" => $max,
             "currentPage" => $currentPage,
+            "contentUser" => $contentUser,
         ]);
         // $this->app->page->add("content1/debug");
 
@@ -431,17 +442,19 @@ class ContentController implements AppInjectableInterface
         $slugErrorMsg = $session->get("slugErrorMsg");
         $session->set("slugErrorMsg", null);
 
-        $content = $this->helper->getRow($id);
-
         $contentUser = $session->get("contentUser");
         $page->add("content1/headerUpOneLevel", [
             "contentUser" => $contentUser,
         ]);
-        $page->add("content1/edit", [
-            "slugErrorMsg" => $slugErrorMsg,
-            "content" => $content,
-            "validFilters" => $this->textFilter->getFilters(),
-        ]);
+        if ($contentUser) {
+            $content = $this->helper->getRow($id);
+            $page->add("content1/edit", [
+                "slugErrorMsg" => $slugErrorMsg,
+                "content" => $content,
+                "validFilters" => $this->textFilter->getFilters(),
+                "contentUser" => $contentUser,
+            ]);
+        }
         // $this->app->page->add("content1/debug");
 
         return $page->render([
@@ -488,9 +501,8 @@ class ContentController implements AppInjectableInterface
             if (!$params["contentSlug"]) {
                 $params["contentSlug"] = slugify($params["contentTitle"]);
             }
-
             if (!$params["contentPath"]) {
-                $params["contentPath"] = null;
+                $params["contentPath"] = pathify($params["contentTitle"]);
             }
 
             $slugErrorMsg = $this->helper->updateRow($params, $contentId);
@@ -513,7 +525,7 @@ class ContentController implements AppInjectableInterface
      *
      * @return object
      */
-    public function deleteActionGet(int $id = 0) : object
+    public function deleteActionGet($id = 0) : object
     {
         // Framework services
         $page = $this->app->page;
@@ -521,16 +533,18 @@ class ContentController implements AppInjectableInterface
 
         $title = "Delete content | oophp";
 
-        $titleObj = $this->helper->getRowTitle($id);
-
         $contentUser = $session->get("contentUser");
-        $page->add("content1/header", [
+        $page->add("content1/headerUpOneLevel", [
             "contentUser" => $contentUser,
         ]);
-        $page->add("content1/delete", [
-            "contentId" => $id,
-            "contentTitle" => $titleObj->title,
-        ]);
+        if ($contentUser) {
+            $titleObj = $this->helper->getRowTitle($id);
+            $page->add("content1/delete", [
+                "contentId" => $id,
+                "contentTitle" => $titleObj->title,
+            ]);
+        }
+
         // $this->app->page->add("content1/debug");
 
         return $page->render([
@@ -578,12 +592,16 @@ class ContentController implements AppInjectableInterface
 
         $title = "View pages | oophp";
 
-        $res = $this->helper->getAllPages();
-
         $contentUser = $session->get("contentUser");
         $page->add("content1/header", [
             "contentUser" => $contentUser,
         ]);
+
+        if ($contentUser) {
+            $res = $this->helper->getAllPages();
+        } else {
+            $res = $this->helper->getAllPublishedPages();
+        }
         $page->add("content1/showPages", [
             "res" => $res,
         ]);
@@ -603,13 +621,17 @@ class ContentController implements AppInjectableInterface
      *
      * @return object
      */
-    public function showPageAction(string $path) : object
+    public function showPageAction(string $path = null) : object
     {
         // Framework services
         $page = $this->app->page;
         $session = $this->app->session;
 
-        $content = $this->helper->getOnePage($path);
+        if ($path === null) {
+            $content = (object)[];
+        } else {
+            $content = $this->helper->getOnePage($path);
+        }
 
         $contentUser = $session->get("contentUser");
         $page->add("content1/headerUpOneLevel", [
@@ -617,14 +639,18 @@ class ContentController implements AppInjectableInterface
         ]);
 
         if ($content == (object)[]) {
-            header("HTTP/1.0 404 Not Found");
             $title = "404";
             $page->add("content1/404");
         } else {
             $title = $content->title;
+            if ($content->data != null) {
+                $parsedData = parseText($this->textFilter, $content->data, $content->filter);
+            } else {
+                $parsedData = $content->data;
+            }
             $page->add("content1/showPage", [
                 "content" => $content,
-                "parsedData" => parseText($this->textFilter, $content->data, $content->filter),
+                "parsedData" => $parsedData,
             ]);
         }
         // $this->app->page->add("content1/debug");
@@ -651,14 +677,20 @@ class ContentController implements AppInjectableInterface
 
         $title = "View blog | oophp";
 
-        $res = $this->helper->getAllPosts();
-
         $contentUser = $session->get("contentUser");
         $page->add("content1/header", [
             "contentUser" => $contentUser,
         ]);
+
+        if ($contentUser) {
+            $res = $this->helper->getAllPosts();
+        } else {
+            $res = $this->helper->getAllPublishedPosts();
+        }
+
         $page->add("content1/showBlog", [
             "res" => $res,
+            // "parsedData" => parseText($this->textFilter, $res->data, $res->filter),
         ]);
         // $this->app->page->add("content1/debug");
 
@@ -690,14 +722,18 @@ class ContentController implements AppInjectableInterface
         ]);
 
         if ($content == (object)[]) {
-            header("HTTP/1.0 404 Not Found");
             $title = "404";
             $page->add("content1/404");
         } else {
             $title = $content->title;
+            if ($content->data != null) {
+                $parsedData = parseText($this->textFilter, $content->data, $content->filter);
+            } else {
+                $parsedData = $content->data;
+            }
             $page->add("content1/showBlogPost", [
                 "content" => $content,
-                "parsedData" => parseText($this->textFilter, $content->data, $content->filter),
+                "parsedData" => $parsedData,
             ]);
         }
         // $this->app->page->add("content1/debug");

@@ -11,7 +11,7 @@ use Anax\Response\ResponseUtility;
  * Test the controller like it would be used from the router,
  * simulating the actual router paths and calling it directly.
  */
-class ContentControllerDandAdminTest extends TestCase
+class ContentControllerLogInOutResetTest extends TestCase
 {
     /**
      * @var ContentController $controller   The ContentController to be tested.
@@ -41,100 +41,100 @@ class ContentControllerDandAdminTest extends TestCase
     }
 
     /**
-     * Call the controller admin action GET.
+     * Call the controller login action GET.
      */
-    public function testAdminActionGet()
+    public function testLoginActionGet()
     {
-        $res = $this->controller->adminActionGet();
+        $res = $this->controller->loginActionGet();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller admin action POST with do delete.
+     * Call the controller login action POST Ok.
      */
-    public function testAdminActionPost()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "order" => "id desc",
-            ]
-        ]);
-        $res = $this->controller->adminActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/admin"));
-    }
-
-    /**
-     * Call the controller admin action POST with do delete.
-     */
-    public function testAdminActionPostDoDelete()
+    public function testLoginActionPostOk()
     {
         $this->app->request->setGlobals([
             "post" => [
-                "order" => "id asc",
-                "contentTitle" => "A title",
-                "doDelete" => "delete 1",
+                "user" => "doe",
+                "password" => "doe",
             ]
         ]);
-        $res = $this->controller->adminActionPost();
+        $res = $this->controller->loginActionPost();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/delete"));
+        $this->assertTrue($this->checkLocation($res, "content1/showAll"));
+        $contentUser = $this->app->session->get("contentUser");
+        $exp = "doe";
+        $this->assertEquals($exp, $contentUser);
     }
 
     /**
-     * Call the controller admin action POST with do edit.
+     * Call the controller login action POST Not Ok.
      */
-    public function testAdminActionPostDoEdit()
+    public function testLoginActionPostNotOk()
     {
         $this->app->request->setGlobals([
             "post" => [
-                "order" => "id desc",
-                "contentTitle" => "A title",
-                "doEdit" => "edit 2",
+                "user" => "doe",
+                "password" => "HEJ",
             ]
         ]);
-        $res = $this->controller->adminActionPost();
+        $res = $this->controller->loginActionPost();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/edit"));
+        $this->assertTrue($this->checkLocation($res, "content1/login"));
+        $msg = $this->app->session->get("loginMessage");
+        $exp = "Faulty login, try again!";
+        $this->assertEquals($exp, $msg);
     }
 
     /**
-     * Call the controller delete action GET.
+     * Call the controller logout action GET.
      */
-    public function testDeleteActionGet()
+    public function testLogoutActionGet()
     {
         $this->app->session->set("contentUser", "doe");
-        
-        $res = $this->controller->deleteActionGet(1);
+
+        $res = $this->controller->logoutActionGet();
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
 
     /**
-     * Call the controller delete action POST nothing set.
+     * Call the controller logout action POST Ok.
      */
-    public function testDeleteActionPost()
+    public function testLogoutActionPostOk()
     {
-        $res = $this->controller->deleteActionPost();
+        $res = $this->controller->logoutActionPost();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/admin"));
+        $this->assertTrue($this->checkLocation($res, "content1/showAll"));
     }
 
     /**
-     * Call the controller delete action POST do delete.
+     * Call the controller reset action GET with reset.
      */
-    public function testDeleteActionPostDoDelete()
+    public function testResetActionGet()
+    {
+        $this->app->session->set("reset", "Reset database");
+
+        $res = $this->controller->resetActionGet();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+    }
+
+    /**
+     * Call the controller reset action POST.
+     */
+    public function testResetActionPost()
     {
         $this->app->request->setGlobals([
             "post" => [
-                "contentTitle" => "A title",
-                "doDelete" => "delete",
+                "reset" => "Reset database",
             ]
         ]);
-        $res = $this->controller->deleteActionPost();
+        $res = $this->controller->resetActionPost();
         $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/admin"));
-
-        $this->resetDatabase();
+        $this->assertTrue($this->checkLocation($res, "content1/reset"));
+        $reset = $this->app->session->get("reset");
+        $exp = "Reset database";
+        $this->assertEquals($exp, $reset);
     }
 
     /**
@@ -156,17 +156,5 @@ class ContentControllerDandAdminTest extends TestCase
             }
         }
         return $hasLocationHeader;
-    }
-
-    /**
-     * Setup the controller, before each testcase, just like the router
-     * would set it up.
-     */
-    private function resetDatabase(): void
-    {
-        // Reset the database after CRUD testcases
-        $dbConfig = $this->app->configuration->load("database");
-        $helper = new DatabaseHelper($this->app->db, "content");
-        $helper->getCommand($dbConfig['config']);
     }
 }

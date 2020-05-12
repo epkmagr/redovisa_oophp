@@ -186,7 +186,7 @@ Ordered list again
         $filter = new MyTextFilter();
 
         $html = "[b]Bold text[/b] [i]Italic text[/i] [url=http://dbwebb.se]a link to dbwebb[/url]";
-        $exp  = "Bold text Italic text a link to dbwebb";
+        $exp  = "<strong>Bold text</strong> <em>Italic text</em> <a href=\"http://dbwebb.se\">a link to dbwebb</a>";
         $res = $filter->parse($html, ["bbcode", "stripTags"]);
         $this->assertEquals($exp, $res, "ecs failed: '$res'");
     }

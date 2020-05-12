@@ -41,35 +41,6 @@ class ContentControllerCRUDTest extends TestCase
     }
 
     /**
-     * Call the controller reset action GET with reset.
-     */
-    public function testResetActionGet()
-    {
-        $this->app->session->set("reset", "Reset database");
-
-        $res = $this->controller->resetActionGet();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-    }
-
-    /**
-     * Call the controller reset action POST.
-     */
-    public function testResetActionPost()
-    {
-        $this->app->request->setGlobals([
-            "post" => [
-                "reset" => "Reset database",
-            ]
-        ]);
-        $res = $this->controller->resetActionPost();
-        $this->assertInstanceOf(ResponseUtility::class, $res);
-        $this->assertTrue($this->checkLocation($res, "content1/reset"));
-        $reset = $this->app->session->get("reset");
-        $exp = "Reset database";
-        $this->assertEquals($exp, $reset);
-    }
-
-    /**
      * Call the controller create action GET.
      */
     public function testCreateActionGet()
@@ -109,6 +80,8 @@ class ContentControllerCRUDTest extends TestCase
      */
     public function testEditActionGet()
     {
+        $this->app->session->set("contentUser", "doe");
+        
         $res = $this->controller->editActionGet(1);
         $this->assertInstanceOf(ResponseUtility::class, $res);
     }
@@ -133,6 +106,24 @@ class ContentControllerCRUDTest extends TestCase
                 "contentId" => 1,
                 "contentTitle" => "A title",
                 "doSave" => "save",
+            ]
+        ]);
+        $res = $this->controller->editActionPost();
+        $this->assertInstanceOf(ResponseUtility::class, $res);
+        $this->assertTrue($this->checkLocation($res, "content1/edit"));
+    }
+
+    /**
+     * Call the controller edit action POST with doSave and published.
+     */
+    public function testEditActionPostDoSavePublish()
+    {
+        $this->app->request->setGlobals([
+            "post" => [
+                "contentId" => 1,
+                "contentTitle" => "A title",
+                "doSave" => "save",
+                "publish" => "publish",
             ]
         ]);
         $res = $this->controller->editActionPost();

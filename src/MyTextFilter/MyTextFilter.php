@@ -22,7 +22,7 @@ class MyTextFilter
         "markdown"   => "markdown",
         "nl2br"      => "nl2br",
         "ecs"        => "ecs",
-        "strip_tags" => "strip_tags",
+        "strip_tags" => "stripTags",
     ];
 
     /**

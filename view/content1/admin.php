@@ -1,5 +1,5 @@
 <?php
-if (!$res) {
+if (!$res || !isset($contentUser)) {
     return;
 }
 ?>
